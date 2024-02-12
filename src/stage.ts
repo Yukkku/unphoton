@@ -14,18 +14,26 @@ export enum CellType {
   HalfMirror,
   MovableHalfMirror,
   Z,
+  S,
+  T,
   MovableZ,
+  MovableS,
+  MovableT,
 }
 
 type MoveableCellType =
   | CellType.MovableMirror
   | CellType.MovableHalfMirror
-  | CellType.MovableZ;
+  | CellType.MovableZ
+  | CellType.MovableS
+  | CellType.MovableT;
 
 const isMoveable = (v: CellType): v is MoveableCellType =>
   v === CellType.MovableMirror ||
   v === CellType.MovableHalfMirror ||
-  v === CellType.MovableZ;
+  v === CellType.MovableZ ||
+  v === CellType.MovableS ||
+  v === CellType.MovableT;
 
 export type Cell =
   | [CellType.None]
@@ -36,8 +44,8 @@ export type Cell =
     CellType.MovableMirror | CellType.MovableHalfMirror,
     0 | 1 | 2 | 3 | 4 | 5,
   ]
-  | [CellType.Z]
-  | [CellType.MovableZ, boolean];
+  | [CellType.Z | CellType.S | CellType.T]
+  | [CellType.MovableZ | CellType.MovableS | CellType.MovableT, boolean];
 
 type MoveableCell = Cell & { 0: MoveableCellType };
 
@@ -197,10 +205,34 @@ export class Stage {
             cw.text("Z", x, y, Color.black, `${r / 2}px monospace`);
             break;
           }
+          case CellType.S: {
+            ctx.fillStyle = Color.sGate;
+            ctx.fill(Hex.path(x, y, r / 2));
+            cw.text("S", x, y, Color.black, `${r / 2}px monospace`);
+            break;
+          }
+          case CellType.T: {
+            ctx.fillStyle = Color.tGate;
+            ctx.fill(Hex.path(x, y, r / 2));
+            cw.text("T", x, y, Color.black, `${r / 2}px monospace`);
+            break;
+          }
           case CellType.MovableZ: {
             ctx.fillStyle = c[1] ? Color.zGate : Color.gray;
             ctx.fill(Hex.path(x, y, r / 2));
             cw.text("Z", x, y, Color.black, `${r / 2}px monospace`);
+            break;
+          }
+          case CellType.MovableS: {
+            ctx.fillStyle = c[1] ? Color.sGate : Color.gray;
+            ctx.fill(Hex.path(x, y, r / 2));
+            cw.text("S", x, y, Color.black, `${r / 2}px monospace`);
+            break;
+          }
+          case CellType.MovableT: {
+            ctx.fillStyle = c[1] ? Color.tGate : Color.gray;
+            ctx.fill(Hex.path(x, y, r / 2));
+            cw.text("T", x, y, Color.black, `${r / 2}px monospace`);
             break;
           }
         }
@@ -273,6 +305,8 @@ export class Stage {
             c[1] = (c[1] + 1) % 6 as 0 | 1 | 2 | 3 | 4 | 5;
             break;
           case CellType.MovableZ:
+          case CellType.MovableS:
+          case CellType.MovableT:
             c[1] = !c[1];
             break;
         }

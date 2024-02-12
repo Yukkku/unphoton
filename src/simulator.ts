@@ -75,6 +75,9 @@ const DIRS = [
 const SQRT1_2 = new Complex(Math.SQRT1_2, 0, 1288103597);
 const NEG_SQRT1_2 = SQRT1_2.neg();
 
+const I = new Complex(0, 1, 36167441);
+const TQ = new Complex(Math.SQRT1_2, Math.SQRT1_2, 1324271039);
+
 export const start = (s: Stage): Func => {
   assert(s.width < UPPER_WIDTH && s.height < UPPER_HEIGHT);
 
@@ -140,6 +143,36 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
           if (c[1]) {
             for (let j = 0; j < gf.length; j++) {
               gf[j][1].chneg();
+            }
+          }
+
+          break;
+        }
+        case CellType.S: {
+          for (let j = 0; j < gf.length; j++) {
+            gf[j][1].chmul(I);
+          }
+          break;
+        }
+        case CellType.MovableS: {
+          if (c[1]) {
+            for (let j = 0; j < gf.length; j++) {
+              gf[j][1].chmul(I);
+            }
+          }
+
+          break;
+        }
+        case CellType.T: {
+          for (let j = 0; j < gf.length; j++) {
+            gf[j][1].chmul(TQ);
+          }
+          break;
+        }
+        case CellType.MovableT: {
+          if (c[1]) {
+            for (let j = 0; j < gf.length; j++) {
+              gf[j][1].chmul(TQ);
             }
           }
 

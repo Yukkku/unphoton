@@ -9,3 +9,5 @@ export const mirror = "#ddd";
 export const start = "#f80";
 export const goal = "#ff0";
 export const zGate = "hsl(180deg,100%,50%)";
+export const sGate = "hsl(90deg,100%,50%)";
+export const tGate = "hsl(45deg,100%,50%)";
