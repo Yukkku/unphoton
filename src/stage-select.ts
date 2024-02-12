@@ -1,4 +1,4 @@
-import { type CanvasWrapper } from "./canvas-wrapper.ts";
+import { CanvasWrapper } from "./canvas-wrapper.ts";
 import * as Color from "./color.ts";
 import * as Hex from "./hex.ts";
 
@@ -43,8 +43,8 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
     };
     const onclick = (e: MouseEvent) => {
       draw(e.offsetX, e.offsetY);
-      cw.onresize = undefined;
       if (id != null) {
+        cw.onresize = undefined;
         cw.elem.removeEventListener("mousemove", onmousemove);
         cw.elem.removeEventListener("click", onclick);
         resolve(id);

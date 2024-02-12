@@ -48,11 +48,15 @@ const funcAdd = (f: Func, pts: [number, number, number][], v: Complex) => {
   const ss = s.split("").sort().join("");
   const l = f.get(ss);
   if (c === 0) {
-    if (l) l.chadd(v);
-    else f.set(ss, v);
+    if (l) {
+      l.chadd(v);
+      if (l.c === 0) f.delete(ss);
+    } else f.set(ss, v);
   } else {
-    if (l) l.chsub(v);
-    else {
+    if (l) {
+      l.chsub(v);
+      if (l.c === 0) f.delete(ss);
+    } else {
       v.chneg();
       f.set(ss, v);
     }
@@ -93,11 +97,26 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
       pt[0] += DIRS[pt[2]][0];
       pt[1] += DIRS[pt[2]][1];
     }
-    for (const [x, y, _d] of pts) {
+    const gf: [[number, number, number][], Complex][] = [[pts, new Complex(v)]];
+    for (const [i, [x, y, _d]] of pts.entries()) {
       const c = s.d[x]?.[y];
       if (c == null || c[0] === CellType.None) return null;
+      switch (c[0]) {
+        case CellType.Plane:
+        case CellType.Start:
+        case CellType.Goal: {
+          break;
+        }
+        case CellType.Mirror: {
+          for (let j = 0; j < gf.length; j++) {
+            const t = gf[j][0][i];
+            t[2] = (c[1] + 6 - t[2]) % 6;
+          }
+          break;
+        }
+      }
     }
-    funcAdd(nf, pts, new Complex(v));
+    for (const [pts, v] of gf) funcAdd(nf, pts, new Complex(v));
   }
   return nf;
 };

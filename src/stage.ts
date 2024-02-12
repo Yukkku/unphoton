@@ -1,18 +1,21 @@
-import { type CanvasWrapper } from "./canvas-wrapper.ts";
+import { CanvasWrapper } from "./canvas-wrapper.ts";
 import * as Color from "./color.ts";
-import { Func, UPPER_WIDTH } from "./simulator.ts";
+import { Func, isAccepted, next, start, UPPER_WIDTH } from "./simulator.ts";
+import { sleep } from "./util.ts";
 
 export enum CellType {
   None,
   Plane,
   Start,
   Goal,
+  Mirror,
 }
 
 export type Cell =
   | [CellType.None]
   | [CellType.Plane]
-  | [CellType.Start | CellType.Goal, 0 | 1 | 2 | 3 | 4 | 5];
+  | [CellType.Start | CellType.Goal, 0 | 1 | 2 | 3 | 4 | 5]
+  | [CellType.Mirror, 0 | 1 | 2 | 3 | 4 | 5];
 
 export class Stage {
   d: readonly (readonly Readonly<Cell>[])[];
@@ -108,5 +111,45 @@ export class Stage {
         }
       }
     }
+
+    for (let i = 0; i < this.d.length; i++) {
+      const l = this.d[i];
+      for (let j = 0; j < l.length; j++) {
+        const c = l[j];
+
+        const x = (j * 2 + i) * rcos30 + dx;
+        const y = i * r * 1.5 + dy;
+
+        switch (c[0]) {
+          case CellType.Mirror: {
+            const srsin = r * Math.sin(c[1] * Math.PI / 6) / 2;
+            const srcos = r * Math.cos(c[1] * Math.PI / 6) / 2;
+            ctx.beginPath();
+            ctx.moveTo(x + srsin, y + srcos);
+            ctx.lineTo(x - srsin, y - srcos);
+            ctx.strokeStyle = Color.mirror;
+            ctx.lineWidth = r / 8;
+            ctx.stroke();
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  async run(cw: CanvasWrapper) {
+    let f: Func = start(this);
+    let last = Date.now();
+    const anime = setInterval(() => {
+      cw.ctx.reset();
+      this.draw(cw, f, (Date.now() - last) / 300);
+    });
+    while (!isAccepted(f, this)) {
+      await sleep(300);
+      f = next(f, this)!;
+      last = Date.now();
+    }
+    clearInterval(anime);
+    this.draw(cw, f, 0);
   }
 }

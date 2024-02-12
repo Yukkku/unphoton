@@ -1,8 +1,6 @@
 import * as Color from "./color.ts";
 import { CanvasWrapper } from "./canvas-wrapper.ts";
 import { CellType, Stage } from "./stage.ts";
-import { type Func, isAccepted, next, start } from "./simulator.ts";
-import { sleep } from "./util.ts";
 import { stageSelect } from "./stage-select.ts";
 
 Object.assign(document.body.style, {
@@ -37,32 +35,20 @@ const cw = new CanvasWrapper();
 
 document.body.appendChild(cw.elem);
 
-await stageSelect(cw);
+for (;;) {
+  await stageSelect(cw);
 
-const stage = new Stage([
-  [[CellType.None], [CellType.None], [CellType.Goal, 4]],
-  [[CellType.None], [CellType.None], [CellType.Plane]],
-  [
-    [CellType.Start, 0],
-    [CellType.Plane],
-    [CellType.Plane],
-    [CellType.Plane],
-    [CellType.Goal, 0],
-  ],
-  [[CellType.None], [CellType.None], [CellType.Plane]],
-  [[CellType.None], [CellType.None], [CellType.Start, 4]],
-]);
-
-let f: Func = start(stage);
-let last = Date.now();
-const anime = setInterval(() => {
-  cw.ctx.reset();
-  stage.draw(cw, f, (Date.now() - last) / 300);
-});
-while (!isAccepted(f, stage)) {
-  await sleep(300);
-  f = next(f, stage)!;
-  last = Date.now();
+  await new Stage([
+    [[CellType.None], [CellType.None], [CellType.Goal, 4]],
+    [[CellType.None], [CellType.None], [CellType.Plane]],
+    [
+      [CellType.Plane],
+      [CellType.Plane],
+      [CellType.Mirror, 4],
+      [CellType.Plane],
+      [CellType.Goal, 0],
+    ],
+    [[CellType.None], [CellType.None], [CellType.Plane]],
+    [[CellType.None], [CellType.None], [CellType.Start, 4]],
+  ]).run(cw);
 }
-clearInterval(anime);
-stage.draw(cw, f, 0);
