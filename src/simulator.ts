@@ -107,6 +107,7 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
         case CellType.Goal: {
           break;
         }
+        case CellType.MovableMirror:
         case CellType.Mirror: {
           for (let j = 0; j < gf.length; j++) {
             const t = gf[j][0][i];
