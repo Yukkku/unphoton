@@ -5,9 +5,9 @@ import { CellType, Stage } from "./stage.ts";
 import { assert } from "./util.ts";
 
 /** ステージ横幅の上界 */
-const UPPER_WIDTH = 104;
+export const UPPER_WIDTH = 104;
 /** ステージ縦幅の上界 */
-const UPPER_HEIGHT = 104;
+export const UPPER_HEIGHT = 104;
 
 export type Func = Map<string, Complex>;
 
@@ -26,12 +26,12 @@ const char2pt = (c: string): [number, number, number] => {
 };
 
 /** 文字列を複数の粒子の位置と向きに変換する */
-const str2pts = (s: string): [number, number, number][] => {
+export const str2pts = (s: string): [number, number, number][] => {
   return Array.from(s, char2pt);
 };
 
 /** 文字列を複数の粒子の位置と向きに変換する */
-const pts2str = (pts: [number, number, number][]): string => {
+export const pts2str = (pts: [number, number, number][]): string => {
   return pts.map((pt) => pt2char(pt[0], pt[1], pt[2])).join("");
 };
 

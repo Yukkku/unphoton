@@ -2,6 +2,7 @@ import * as Color from "./color.ts";
 import { CanvasWrapper } from "./canvas-wrapper.ts";
 import { CellType, Stage } from "./stage.ts";
 import { type Func, isAccepted, next, start } from "./simulator.ts";
+import { sleep } from "./util.ts";
 
 Object.assign(document.body.style, {
   margin: "0",
@@ -49,10 +50,16 @@ const stage = new Stage([
   [[CellType.None], [CellType.None], [CellType.Start, 4]],
 ]);
 
-stage.draw(cw);
 let f: Func = start(stage);
+let last = Date.now();
+const anime = setInterval(() => {
+  cw.ctx.reset();
+  stage.draw(cw, f, (Date.now() - last) / 300);
+});
 while (!isAccepted(f, stage)) {
-  console.log(f);
+  await sleep(300);
   f = next(f, stage)!;
+  last = Date.now();
 }
-console.log(f);
+clearInterval(anime);
+stage.draw(cw, f, 0);
