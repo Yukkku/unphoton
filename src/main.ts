@@ -1,6 +1,7 @@
 import * as Color from "./color.ts";
 import { CanvasWrapper } from "./canvas-wrapper.ts";
 import { CellType, Stage } from "./stage.ts";
+import { type Func, isAccepted, next, start } from "./simulator.ts";
 
 Object.assign(document.body.style, {
   margin: "0",
@@ -34,20 +35,24 @@ const cw = new CanvasWrapper();
 
 document.body.appendChild(cw.elem);
 
-new Stage([
+const stage = new Stage([
+  [[CellType.None], [CellType.None], [CellType.Goal, 4]],
+  [[CellType.None], [CellType.None], [CellType.Plane]],
   [
-    [CellType.None],
     [CellType.Start, 0],
     [CellType.Plane],
-  ],
-  [
     [CellType.Plane],
-    [CellType.None],
     [CellType.Plane],
+    [CellType.Goal, 0],
   ],
-  [
-    [CellType.Plane],
-    [CellType.Goal, 3],
-    [CellType.None],
-  ],
-]).draw(cw);
+  [[CellType.None], [CellType.None], [CellType.Plane]],
+  [[CellType.None], [CellType.None], [CellType.Start, 4]],
+]);
+
+stage.draw(cw);
+let f: Func = start(stage);
+while (!isAccepted(f, stage)) {
+  console.log(f);
+  f = next(f, stage)!;
+}
+console.log(f);

@@ -1,4 +1,3 @@
-import * as Hex from "./hex.ts";
 import { type CanvasWrapper } from "./canvas-wrapper.ts";
 import * as Color from "./color.ts";
 
@@ -15,13 +14,19 @@ export type Cell =
   | [CellType.Start | CellType.Goal, 0 | 1 | 2 | 3 | 4 | 5];
 
 export class Stage {
-  #d: Cell[][];
-
+  d: readonly (readonly Readonly<Cell>[])[];
   #width: number;
 
   constructor(d: Cell[][]) {
-    this.#d = structuredClone(d);
+    this.d = structuredClone(d);
     this.#width = Math.max(...d.map((v) => v.length));
+  }
+
+  get width(): number {
+    return this.#width;
+  }
+  get height(): number {
+    return this.d.length;
   }
 
   draw(cw: CanvasWrapper) {
@@ -30,8 +35,8 @@ export class Stage {
     const rcos30 = r * 0.8660254037844386;
 
     const path = new Path2D();
-    for (let i = 0; i < this.#d.length; i++) {
-      const l = this.#d[i];
+    for (let i = 0; i < this.d.length; i++) {
+      const l = this.d[i];
       for (let j = 0; j < l.length; j++) {
         const c = l[j];
 
