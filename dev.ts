@@ -1,0 +1,16 @@
+import * as esbuild from "https://deno.land/x/esbuild@v0.17.19/mod.js";
+import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.8.1/mod.ts";
+
+const ctx = await esbuild.context({
+  plugins: [...denoPlugins()],
+  entryPoints: ["src/main.ts"],
+  outfile: "./dist/main.js",
+  bundle: true,
+  minify: true,
+  format: "esm",
+});
+
+ctx.serve({
+  port: 8302,
+  servedir: "./dist",
+});

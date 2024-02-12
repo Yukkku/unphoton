@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "deno.window",
+      "dom",
+      "dom.iterable"
+    ]
+  },
+
+  "exclude": ["./dist"],
+  "fmt": { "exclude": ["./LICENSE"] },
+
+  "tasks": {
+    "build": "deno run -A build.ts",
+    "dev": "deno run -A dev.ts",
+    "run": "deno run -A build.ts && deno run -A run.ts"
+  },
+
+  "lint": {
+    "rules": {
+      "exclude": [
+        "no-window",
+        "no-window-prefix"
+      ]
+    }
+  }
+}
