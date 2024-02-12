@@ -1,5 +1,6 @@
 import * as Color from "./color.ts";
 import { CanvasWrapper } from "./canvas-wrapper.ts";
+import { CellType, Stage } from "./stage.ts";
 
 Object.assign(document.body.style, {
   margin: "0",
@@ -32,3 +33,21 @@ const cw = new CanvasWrapper();
 }
 
 document.body.appendChild(cw.elem);
+
+new Stage([
+  [
+    [CellType.None],
+    [CellType.Start, 0],
+    [CellType.Plane],
+  ],
+  [
+    [CellType.Plane],
+    [CellType.None],
+    [CellType.Plane],
+  ],
+  [
+    [CellType.Plane],
+    [CellType.Goal, 3],
+    [CellType.None],
+  ],
+]).draw(cw);
