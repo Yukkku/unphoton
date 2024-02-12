@@ -130,6 +130,21 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
           }
           break;
         }
+        case CellType.Z: {
+          for (let j = 0; j < gf.length; j++) {
+            gf[j][1].chneg();
+          }
+          break;
+        }
+        case CellType.MovableZ: {
+          if (c[1]) {
+            for (let j = 0; j < gf.length; j++) {
+              gf[j][1].chneg();
+            }
+          }
+
+          break;
+        }
       }
     }
     for (const [pts, v] of gf) funcAdd(nf, pts, v);

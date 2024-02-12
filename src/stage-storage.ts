@@ -43,4 +43,26 @@ export const stages: Cell[][][] = [
       [CellType.Goal, 0],
     ],
   ],
+  [ // 3
+    [
+      [CellType.Start, 0],
+      [CellType.Plane],
+      [CellType.HalfMirror, 2],
+      [CellType.MovableZ, false],
+      [CellType.Mirror, 2],
+    ],
+    [
+      [CellType.None],
+      [CellType.Plane],
+      [CellType.None],
+      [CellType.Plane],
+    ],
+    [
+      [CellType.Mirror, 2],
+      [CellType.Z],
+      [CellType.HalfMirror, 2],
+      [CellType.Plane],
+      [CellType.Goal, 0],
+    ],
+  ],
 ];

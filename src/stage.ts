@@ -13,17 +13,33 @@ export enum CellType {
   Mirror,
   HalfMirror,
   MovableHalfMirror,
+  Z,
+  MovableZ,
 }
 
+type MoveableCellType =
+  | CellType.MovableMirror
+  | CellType.MovableHalfMirror
+  | CellType.MovableZ;
+
+const isMoveable = (v: CellType): v is MoveableCellType =>
+  v === CellType.MovableMirror ||
+  v === CellType.MovableHalfMirror ||
+  v === CellType.MovableZ;
+
 export type Cell =
-  | readonly [CellType.None]
-  | readonly [CellType.Plane]
+  | [CellType.None]
+  | [CellType.Plane]
   | readonly [CellType.Start | CellType.Goal, 0 | 1 | 2 | 3 | 4 | 5]
   | readonly [CellType.Mirror | CellType.HalfMirror, 0 | 1 | 2 | 3 | 4 | 5]
   | [
     CellType.MovableMirror | CellType.MovableHalfMirror,
     0 | 1 | 2 | 3 | 4 | 5,
-  ];
+  ]
+  | [CellType.Z]
+  | [CellType.MovableZ, boolean];
+
+type MoveableCell = Cell & { 0: MoveableCellType };
 
 export class Stage {
   d: readonly (readonly Cell[])[];
@@ -76,10 +92,7 @@ export class Stage {
         const y = i * r * 1.5 + dy;
 
         if (c[0] === CellType.None) continue;
-        if (
-          c[0] === CellType.MovableMirror ||
-          c[0] === CellType.MovableHalfMirror
-        ) cw.hilightHex(x, y, r);
+        if (isMoveable(c[0])) cw.hilightHex(x, y, r);
         else cw.hex(x, y, r);
 
         switch (c[0]) {
@@ -178,12 +191,28 @@ export class Stage {
             ctx.stroke();
             break;
           }
+          case CellType.Z: {
+            ctx.fillStyle = Color.zGate;
+            ctx.fill(Hex.path(x, y, r / 2));
+            cw.text("Z", x, y, Color.black, `${r / 2}px monospace`);
+            break;
+          }
+          case CellType.MovableZ: {
+            ctx.fillStyle = c[1] ? Color.zGate : Color.gray;
+            ctx.fill(Hex.path(x, y, r / 2));
+            cw.text("Z", x, y, Color.black, `${r / 2}px monospace`);
+            break;
+          }
         }
       }
     }
   }
 
-  mouseTouching(cw: CanvasWrapper, mx: number, my: number): Cell | undefined {
+  mouseTouching(
+    cw: CanvasWrapper,
+    mx: number,
+    my: number,
+  ): MoveableCell | undefined {
     const { r } = cw;
     const rcos30 = r * 0.8660254037844386;
 
@@ -198,12 +227,9 @@ export class Stage {
         const x = (j * 2 + i) * rcos30 + dx;
         const y = i * r * 1.5 + dy;
 
-        if (
-          (
-            c[0] === CellType.MovableMirror ||
-            c[0] === CellType.MovableHalfMirror
-          ) && Hex.isTouching(mx - x, my - y, r * 0.875)
-        ) return c;
+        if (isMoveable(c[0]) && Hex.isTouching(mx - x, my - y, r * 0.875)) {
+          return c as MoveableCell;
+        }
       }
     }
   }
@@ -241,11 +267,14 @@ export class Stage {
       const onclick = (e: MouseEvent) => {
         const c = this.mouseTouching(cw, e.offsetX, e.offsetY);
         if (!c) return;
-        if (
-          c[0] === CellType.MovableMirror ||
-          c[0] === CellType.MovableHalfMirror
-        ) {
-          c[1] = (c[1] + 1) % 6 as 0 | 1 | 2 | 3 | 4 | 5;
+        switch (c[0]) {
+          case CellType.MovableMirror:
+          case CellType.MovableHalfMirror:
+            c[1] = (c[1] + 1) % 6 as 0 | 1 | 2 | 3 | 4 | 5;
+            break;
+          case CellType.MovableZ:
+            c[1] = !c[1];
+            break;
         }
         cw.clear();
         this.draw(cw);
