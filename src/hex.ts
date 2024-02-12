@@ -1,0 +1,16 @@
+/** @file 六角形を楽に扱うための関数集 */
+
+/** (`x`, `y`)が中心で半径`r`の円に内接する正六角形のPath2D */
+export const path = (x: number, y: number, r: number): Path2D => {
+  const rcos30 = r * 0.8660254037844386;
+  const rsin30 = r / 2;
+  const p = new Path2D();
+  p.moveTo(x, y - r);
+  p.lineTo(x + rcos30, y - rsin30);
+  p.lineTo(x + rcos30, y + rsin30);
+  p.lineTo(x, y + r);
+  p.lineTo(x - rcos30, y + rsin30);
+  p.lineTo(x - rcos30, y - rsin30);
+  p.closePath();
+  return p;
+};

@@ -1,3 +1,6 @@
+import * as Color from "./color.ts";
+import { CanvasWrapper } from "./canvas-wrapper.ts";
+
 Object.assign(document.body.style, {
   margin: "0",
   backgroundColor: "#000",
@@ -9,18 +12,23 @@ Object.assign(document.body.style, {
   alignItems: "center",
 });
 
-const canvas = document.createElement("canvas");
-document.body.appendChild(canvas);
-{
+const cw = new CanvasWrapper();
+
+{ // windowのサイズ変更用の処理
   const setSize = () => {
-    const c = Math.floor(Math.min(
+    const s = Math.floor(Math.min(
       window.innerHeight / 9,
       window.innerWidth / 16,
     ));
-    canvas.height = c * 9;
-    canvas.width = c * 16;
+    cw.elem.width = s * 16;
+    cw.elem.height = s * 9;
+
+    cw.ctx.fillStyle = Color.background;
+    cw.ctx.fillRect(0, 0, cw.width, cw.height);
+    cw.onresize?.();
   };
-  setSize();
   window.addEventListener("resize", setSize);
+  setSize();
 }
-const ctx = canvas.getContext("2d")!;
+
+document.body.appendChild(cw.elem);
