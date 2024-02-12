@@ -51,14 +51,13 @@ const funcAdd = (f: Func, pts: [number, number, number][], v: Complex) => {
     if (l) {
       l.chadd(v);
       if (l.c === 0) f.delete(ss);
-    } else f.set(ss, v);
+    } else f.set(ss, new Complex(v));
   } else {
     if (l) {
       l.chsub(v);
       if (l.c === 0) f.delete(ss);
     } else {
-      v.chneg();
-      f.set(ss, v);
+      f.set(ss, v.neg());
     }
   }
 };
@@ -72,6 +71,9 @@ const DIRS = [
   [-1, 0],
   [-1, 1],
 ] as const;
+
+const SQRT1_2 = new Complex(Math.SQRT1_2, 0, 1288103597);
+const NEG_SQRT1_2 = SQRT1_2.neg();
 
 export const start = (s: Stage): Func => {
   assert(s.width < UPPER_WIDTH && s.height < UPPER_HEIGHT);
@@ -97,7 +99,7 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
       pt[0] += DIRS[pt[2]][0];
       pt[1] += DIRS[pt[2]][1];
     }
-    const gf: [[number, number, number][], Complex][] = [[pts, new Complex(v)]];
+    const gf: [[number, number, number][], Complex][] = [[pts, v]];
     for (const [i, [x, y, _d]] of pts.entries()) {
       const c = s.d[x]?.[y];
       if (c == null || c[0] === CellType.None) return null;
@@ -109,15 +111,28 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
         }
         case CellType.MovableMirror:
         case CellType.Mirror: {
-          for (let j = 0; j < gf.length; j++) {
-            const t = gf[j][0][i];
-            t[2] = (c[1] + 6 - t[2]) % 6;
+          pts[i][2] = (c[1] + 6 - pts[i][2]) % 6;
+          break;
+        }
+        case CellType.MovableHalfMirror:
+        case CellType.HalfMirror: {
+          if (c[1] === pts[i][2] * 2 % 6) break;
+          const e: [number, number, number] = [
+            pts[i][0],
+            pts[i][1],
+            (c[1] + 6 - pts[i][2]) % 6,
+          ];
+          const b = pts[i][2] < e[2];
+          const len = gf.length;
+          for (let j = 0; j < len; j++) {
+            gf.push([gf[j][0].with(i, e), gf[j][1].mul(SQRT1_2)]);
+            gf[j][1].chmul(b ? NEG_SQRT1_2 : SQRT1_2);
           }
           break;
         }
       }
     }
-    for (const [pts, v] of gf) funcAdd(nf, pts, new Complex(v));
+    for (const [pts, v] of gf) funcAdd(nf, pts, v);
   }
   return nf;
 };

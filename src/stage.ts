@@ -11,14 +11,19 @@ export enum CellType {
   Goal,
   MovableMirror,
   Mirror,
+  HalfMirror,
+  MovableHalfMirror,
 }
 
 export type Cell =
   | readonly [CellType.None]
   | readonly [CellType.Plane]
   | readonly [CellType.Start | CellType.Goal, 0 | 1 | 2 | 3 | 4 | 5]
-  | readonly [CellType.Mirror, 0 | 1 | 2 | 3 | 4 | 5]
-  | [CellType.MovableMirror, 0 | 1 | 2 | 3 | 4 | 5];
+  | readonly [CellType.Mirror | CellType.HalfMirror, 0 | 1 | 2 | 3 | 4 | 5]
+  | [
+    CellType.MovableMirror | CellType.MovableHalfMirror,
+    0 | 1 | 2 | 3 | 4 | 5,
+  ];
 
 export class Stage {
   d: readonly (readonly Cell[])[];
@@ -71,7 +76,10 @@ export class Stage {
         const y = i * r * 1.5 + dy;
 
         if (c[0] === CellType.None) continue;
-        if (c[0] === CellType.MovableMirror) cw.hilightHex(x, y, r);
+        if (
+          c[0] === CellType.MovableMirror ||
+          c[0] === CellType.MovableHalfMirror
+        ) cw.hilightHex(x, y, r);
         else cw.hex(x, y, r);
 
         switch (c[0]) {
@@ -156,6 +164,20 @@ export class Stage {
             ctx.stroke();
             break;
           }
+          case CellType.MovableHalfMirror:
+          case CellType.HalfMirror: {
+            const srsin = r * Math.sin(c[1] * Math.PI / 6) / 2;
+            const srcos = r * Math.cos(c[1] * Math.PI / 6) / 2;
+            ctx.beginPath();
+            ctx.moveTo(x + srcos, y + srsin);
+            ctx.lineTo(x + srcos / 4, y + srsin / 4);
+            ctx.moveTo(x - srcos, y - srsin);
+            ctx.lineTo(x - srcos / 4, y - srsin / 4);
+            ctx.strokeStyle = Color.mirror;
+            ctx.lineWidth = r / 8;
+            ctx.stroke();
+            break;
+          }
         }
       }
     }
@@ -176,9 +198,12 @@ export class Stage {
         const x = (j * 2 + i) * rcos30 + dx;
         const y = i * r * 1.5 + dy;
 
-        if (c[0] === CellType.MovableMirror) {
-          if (Hex.isTouching(mx - x, my - y, r * 0.875)) return c;
-        }
+        if (
+          (
+            c[0] === CellType.MovableMirror ||
+            c[0] === CellType.MovableHalfMirror
+          ) && Hex.isTouching(mx - x, my - y, r * 0.875)
+        ) return c;
       }
     }
   }
@@ -216,7 +241,10 @@ export class Stage {
       const onclick = (e: MouseEvent) => {
         const c = this.mouseTouching(cw, e.offsetX, e.offsetY);
         if (!c) return;
-        if (c[0] === CellType.MovableMirror) {
+        if (
+          c[0] === CellType.MovableMirror ||
+          c[0] === CellType.MovableHalfMirror
+        ) {
           c[1] = (c[1] + 1) % 6 as 0 | 1 | 2 | 3 | 4 | 5;
         }
         cw.clear();

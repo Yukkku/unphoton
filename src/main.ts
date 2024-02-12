@@ -1,7 +1,8 @@
 import * as Color from "./color.ts";
 import { CanvasWrapper } from "./canvas-wrapper.ts";
-import { CellType, Stage } from "./stage.ts";
+import { Stage } from "./stage.ts";
 import { stageSelect } from "./stage-select.ts";
+import { stages } from "./stage-storage.ts";
 
 Object.assign(document.body.style, {
   margin: "0",
@@ -37,19 +38,7 @@ const cw = new CanvasWrapper();
 document.body.appendChild(cw.elem);
 
 for (;;) {
-  await stageSelect(cw);
+  const id = await stageSelect(cw);
 
-  await new Stage([
-    [[CellType.None], [CellType.None], [CellType.Goal, 4]],
-    [[CellType.None], [CellType.None], [CellType.Plane]],
-    [
-      [CellType.Plane],
-      [CellType.Plane],
-      [CellType.MovableMirror, 3],
-      [CellType.Plane],
-      [CellType.Goal, 0],
-    ],
-    [[CellType.None], [CellType.None], [CellType.Plane]],
-    [[CellType.None], [CellType.None], [CellType.Start, 4]],
-  ]).play(cw);
+  await new Stage(stages[id - 1]).play(cw);
 }
