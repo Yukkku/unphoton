@@ -14,3 +14,17 @@ export const path = (x: number, y: number, r: number): Path2D => {
   p.closePath();
   return p;
 };
+
+/** 当たり判定 */
+export const isTouching = (
+  dx: number,
+  dy: number,
+  r: number,
+): boolean => {
+  const rcos30 = r * 0.8660254037844386;
+  if (dx < 0) dx *= -1;
+  if (dy < 0) dy *= -1;
+  if (rcos30 < dx) return false;
+  const rsin30 = r / 2;
+  return (dy - r) * rcos30 + dx * rsin30 <= 0;
+};

@@ -31,8 +31,7 @@ export class Stage {
   }
 
   draw(cw: CanvasWrapper, f?: Func, t = 0) {
-    const { ctx } = cw;
-    const r = cw.width / 30;
+    const { ctx, r } = cw;
     const rcos30 = r * 0.8660254037844386;
 
     const dx = 100;

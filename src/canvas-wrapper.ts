@@ -21,6 +21,10 @@ export class CanvasWrapper {
     return this.elem.height;
   }
 
+  get r(): number {
+    return this.width / 30;
+  }
+
   /** 上下左右中央揃えで文字を書く */
   text(text: string, x: number, y: number, color: string, font: string) {
     this.ctx.font = font;
@@ -31,21 +35,34 @@ export class CanvasWrapper {
       actualBoundingBoxAscent: top,
       actualBoundingBoxDescent: bottom,
     } = this.ctx.measureText(text);
-    console.log(this.ctx.measureText(text));
     this.ctx.fillText(
       text,
-      x - (left + right) / 2,
-      y - (bottom - top) / 2,
+      x + (left - right) / 2,
+      y + (top - bottom) / 2,
     );
   }
 
   /** 標準的な六角形を描く */
-  hex(x: number, y: number, r = this.width / 30) {
+  hex(x: number, y: number, r = this.r) {
     const path = Hex.path(x, y, r * 0.875);
     this.ctx.fillStyle = Color.hexFill;
     this.ctx.strokeStyle = Color.gray;
     this.ctx.lineWidth = r / 15;
     this.ctx.fill(path);
     this.ctx.stroke(path);
+  }
+
+  /** 標準的な六角形を描く */
+  hilightHex(x: number, y: number, r = this.r) {
+    const path = Hex.path(x, y, r * 0.875);
+    this.ctx.fillStyle = Color.hexFill;
+    this.ctx.strokeStyle = Color.white;
+    this.ctx.lineWidth = r / 15;
+    this.ctx.fill(path);
+    this.ctx.stroke(path);
+  }
+
+  clear() {
+    this.ctx.reset();
   }
 }

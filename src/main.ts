@@ -3,6 +3,7 @@ import { CanvasWrapper } from "./canvas-wrapper.ts";
 import { CellType, Stage } from "./stage.ts";
 import { type Func, isAccepted, next, start } from "./simulator.ts";
 import { sleep } from "./util.ts";
+import { stageSelect } from "./stage-select.ts";
 
 Object.assign(document.body.style, {
   margin: "0",
@@ -35,6 +36,8 @@ const cw = new CanvasWrapper();
 }
 
 document.body.appendChild(cw.elem);
+
+await stageSelect(cw);
 
 const stage = new Stage([
   [[CellType.None], [CellType.None], [CellType.Goal, 4]],
