@@ -147,6 +147,8 @@ export class Stage {
           const x = (j * 2 + i) * rcos30 + dx;
           const y = i * r * 1.5 + dy;
           for (let d = 0; d < 6; d++) {
+            const h = p[(i * UPPER_WIDTH + j) * 6 + d];
+            if (h === 0) continue;
             ctx.beginPath();
             ctx.arc(
               x + rot[d][1] * t,
@@ -155,9 +157,7 @@ export class Stage {
               0,
               Math.PI * 2,
             );
-            ctx.fillStyle = `rgb(255,255,0,${
-              p[(i * UPPER_WIDTH + j) * 6 + d]
-            })`;
+            ctx.fillStyle = `rgb(255,255,0,${h * 0.75 + 0.25})`;
             ctx.fill();
           }
         }

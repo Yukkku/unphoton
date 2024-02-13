@@ -23,6 +23,90 @@ export const stages: Cell[][][] = [
   ],
   [ // 2
     [
+      [CellType.None],
+      [CellType.None],
+      [CellType.MovableMirror, 1],
+      [CellType.Plane],
+      [CellType.MovableMirror, 3],
+    ],
+    [
+      [CellType.None],
+      [CellType.None],
+      [CellType.Plane],
+      [CellType.Plane],
+    ],
+    [
+      [CellType.None],
+      [CellType.None],
+      [CellType.Goal, 3],
+      [CellType.Plane],
+      [CellType.MovableMirror, 5],
+    ],
+    [
+      [CellType.None],
+      [CellType.Plane],
+      [CellType.Plane],
+      [CellType.Plane],
+    ],
+    [
+      [CellType.Start, 5],
+      [CellType.None],
+      [CellType.MovableMirror, 4],
+    ],
+  ],
+  [ // 3
+    [
+      [CellType.None],
+      [CellType.None],
+      [CellType.None],
+      [CellType.Mirror, 0],
+    ],
+    [
+      [CellType.None],
+      [CellType.Mirror, 4],
+      [CellType.MovableMirror, 5],
+      [CellType.Mirror, 1],
+      [CellType.Mirror, 2],
+    ],
+    [
+      [CellType.None],
+      [CellType.Start, 4],
+      [CellType.Mirror, 0],
+      [CellType.Goal, 4],
+    ],
+    [
+      [CellType.Mirror, 2],
+      [CellType.Mirror, 1],
+      [CellType.Mirror, 5],
+      [CellType.Mirror, 4],
+    ],
+    [
+      [CellType.None],
+      [CellType.Mirror, 0],
+    ],
+  ],
+  [ // 4
+    [
+      [CellType.Start, 0],
+      [CellType.Goal, 3],
+      [CellType.MovableHalfMirror, 2],
+      [CellType.Plane],
+      [CellType.Mirror, 2],
+    ],
+    [
+      [CellType.None],
+      [CellType.None],
+      [CellType.Plane],
+      [CellType.Plane],
+    ],
+    [
+      [CellType.None],
+      [CellType.None],
+      [CellType.Mirror, 0],
+    ],
+  ],
+  [ // 5
+    [
       [CellType.Start, 0],
       [CellType.Plane],
       [CellType.HalfMirror, 2],
@@ -43,7 +127,7 @@ export const stages: Cell[][][] = [
       [CellType.Goal, 0],
     ],
   ],
-  [ // 3
+  [ // 6
     [
       [CellType.Start, 0],
       [CellType.Plane],
@@ -65,7 +149,7 @@ export const stages: Cell[][][] = [
       [CellType.Goal, 0],
     ],
   ],
-  [ // 4
+  [ // 7
     [
       [CellType.None],
       [CellType.None],

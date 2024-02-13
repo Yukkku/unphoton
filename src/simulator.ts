@@ -114,17 +114,16 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
         }
         case CellType.MovableMirror:
         case CellType.Mirror: {
-          pts[i][2] = (c[1] + 6 - pts[i][2]) % 6;
+          const d = (c[1] + 6 - pts[i][2]) % 6;
+          if (pts[i][2] === d) return null;
+          pts[i][2] = d;
           break;
         }
         case CellType.MovableHalfMirror:
         case CellType.HalfMirror: {
-          if (c[1] === pts[i][2] * 2 % 6) break;
-          const e: [number, number, number] = [
-            pts[i][0],
-            pts[i][1],
-            (c[1] + 6 - pts[i][2]) % 6,
-          ];
+          const d = (c[1] + 6 - pts[i][2]) % 6;
+          if (pts[i][2] === d) return null;
+          const e: [number, number, number] = [pts[i][0], pts[i][1], d];
           const b = pts[i][2] < e[2];
           const len = gf.length;
           for (let j = 0; j < len; j++) {
