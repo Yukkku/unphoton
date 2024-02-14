@@ -87,6 +87,26 @@ export const stages: Cell[][][] = [
   ],
   [ // 4
     [
+      [CellType.Start, 1],
+      [CellType.None],
+      [CellType.Goal, 5],
+    ],
+    [
+      [CellType.Plane],
+      [CellType.Plane],
+    ],
+    [
+      [CellType.MovableHalfMirror, 3],
+    ],
+    [
+      [CellType.Plane],
+    ],
+    [
+      [CellType.Goal, 1],
+    ],
+  ],
+  [ // 5
+    [
       [CellType.Start, 0],
       [CellType.Goal, 3],
       [CellType.MovableHalfMirror, 2],
@@ -105,7 +125,7 @@ export const stages: Cell[][][] = [
       [CellType.Mirror, 0],
     ],
   ],
-  [ // 5
+  [ // 6
     [
       [CellType.Start, 0],
       [CellType.Plane],
@@ -127,7 +147,7 @@ export const stages: Cell[][][] = [
       [CellType.Goal, 0],
     ],
   ],
-  [ // 6
+  [ // 7
     [
       [CellType.Start, 0],
       [CellType.Plane],
@@ -149,7 +169,7 @@ export const stages: Cell[][][] = [
       [CellType.Goal, 0],
     ],
   ],
-  [ // 7
+  [ // 8
     [
       [CellType.None],
       [CellType.None],
