@@ -276,6 +276,7 @@ export class Stage {
     while (!isAccepted(f, this)) {
       await sleep(300);
       const nf = next(f, this);
+      console.log(nf);
       if (nf) f = nf;
       else {
         clearInterval(anime);

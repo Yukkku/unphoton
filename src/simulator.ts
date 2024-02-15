@@ -73,7 +73,7 @@ const DIRS = [
 ] as const;
 
 const I = new Complex(0, 1, 36167441);
-const TQ = new Complex(Math.SQRT1_2, Math.SQRT1_2, 1324271039);
+const TQ = new Complex(Math.SQRT1_2, Math.SQRT1_2, 2123366577);
 
 const hp = new Complex(0.5, 0.5, 18083721);
 const hm = new Complex(0.5, -0.5, 4276883441);

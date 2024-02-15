@@ -1,6 +1,6 @@
 import { Cell, CellType } from "./stage.ts";
 
-export const stages: Cell[][][] = [
+export const stages = [
   [ // 1
     [
       [CellType.Start, 0],
@@ -258,4 +258,58 @@ export const stages: Cell[][][] = [
       [CellType.Mirror, 5],
     ],
   ],
-];
+  [ // 10
+    [
+      [CellType.None],
+      [CellType.None],
+      [CellType.Mirror, 5],
+      [CellType.Start, 0],
+      [CellType.Mirror, 1],
+      [CellType.None],
+      [CellType.Mirror, 5],
+      [CellType.S],
+      [CellType.Mirror, 1],
+    ],
+    [
+      [CellType.None],
+      [CellType.MovableT, true],
+      [CellType.None],
+      [CellType.None],
+      [CellType.HalfMirror, 5],
+      [CellType.HalfMirror, 1],
+      [CellType.None],
+      [CellType.None],
+      [CellType.Plane],
+    ],
+    [
+      [CellType.Mirror, 3],
+      [CellType.None],
+      [CellType.None],
+      [CellType.None],
+      [CellType.Plane],
+      [CellType.None],
+      [CellType.None],
+      [CellType.None],
+      [CellType.Mirror, 3],
+    ],
+    [
+      [CellType.MovableZ, true],
+      [CellType.None],
+      [CellType.None],
+      [CellType.Plane],
+      [CellType.Plane],
+      [CellType.None],
+      [CellType.None],
+      [CellType.T],
+    ],
+    [
+      [CellType.Mirror, 1],
+      [CellType.MovableS, true],
+      [CellType.Mirror, 5],
+      [CellType.None],
+      [CellType.Mirror, 1],
+      [CellType.Goal, 3],
+      [CellType.Mirror, 5],
+    ],
+  ],
+] as const satisfies Cell[][][];
