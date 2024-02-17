@@ -312,4 +312,36 @@ export const stages = [
       [CellType.Mirror, 5],
     ],
   ],
+  [ // 11
+    [
+      [CellType.Mirror, 4],
+      [CellType.Start, 0],
+      [CellType.MovableHalfMirror, 5],
+      [CellType.Mirror, 1],
+    ],
+    [
+      [CellType.Plane],
+      [CellType.None],
+      [CellType.Mirror, 1],
+      [CellType.MovableHalfMirror, 3],
+      [CellType.Mirror, 1],
+    ],
+    [
+      [CellType.Plane],
+      [CellType.None],
+      [CellType.None],
+      [CellType.Mirror, 1],
+      [CellType.MovableHalfMirror, 3],
+    ],
+    [
+      [CellType.HalfMirror, 4],
+      [CellType.Plane],
+      [CellType.Plane],
+      [CellType.Plane],
+      [CellType.Mirror, 4],
+    ],
+    [
+      [CellType.Goal, 1],
+    ],
+  ],
 ] as const satisfies Cell[][][];
