@@ -70,7 +70,7 @@ const DIRS = [
   [0, -1],
   [-1, 0],
   [-1, 1],
-] as const;
+] as const satisfies [number, number][];
 
 const I = new Complex(0, 1, 36167441);
 const TQ = new Complex(Math.SQRT1_2, Math.SQRT1_2, 2123366577);
@@ -105,13 +105,12 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
     const gf: [[number, number, number][], Complex][] = [[pts, new Complex(v)]];
     for (const [i, [x, y, _d]] of pts.entries()) {
       const c = s.d[x]?.[y];
-      if (c == null || c[0] === CellType.None) return null;
+      if (c == null) return null;
       switch (c[0]) {
         case CellType.Plane:
         case CellType.Start:
-        case CellType.Goal: {
+        case CellType.Goal:
           break;
-        }
         case CellType.MovableMirror:
         case CellType.Mirror: {
           const d = (c[1] + 6 - pts[i][2]) % 6;
@@ -131,51 +130,29 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
           }
           break;
         }
+        case CellType.MovableZ:
+          if (!c[1]) break;
+          /* falls through */
         case CellType.Z: {
-          for (let j = 0; j < gf.length; j++) {
-            gf[j][1].chneg();
-          }
+          for (let j = 0; j < gf.length; j++) gf[j][1].chneg();
           break;
         }
-        case CellType.MovableZ: {
-          if (c[1]) {
-            for (let j = 0; j < gf.length; j++) {
-              gf[j][1].chneg();
-            }
-          }
-
-          break;
-        }
+        case CellType.MovableS:
+          if (!c[1]) break;
+          /* falls through */
         case CellType.S: {
-          for (let j = 0; j < gf.length; j++) {
-            gf[j][1].chmul(I);
-          }
+          for (let j = 0; j < gf.length; j++) gf[j][1].chmul(I);
           break;
         }
-        case CellType.MovableS: {
-          if (c[1]) {
-            for (let j = 0; j < gf.length; j++) {
-              gf[j][1].chmul(I);
-            }
-          }
-
-          break;
-        }
+        case CellType.MovableT:
+          if (!c[1]) break;
+          /* falls through */
         case CellType.T: {
-          for (let j = 0; j < gf.length; j++) {
-            gf[j][1].chmul(TQ);
-          }
+          for (let j = 0; j < gf.length; j++) gf[j][1].chmul(TQ);
           break;
         }
-        case CellType.MovableT: {
-          if (c[1]) {
-            for (let j = 0; j < gf.length; j++) {
-              gf[j][1].chmul(TQ);
-            }
-          }
-
-          break;
-        }
+        default:
+          return null;
       }
     }
     for (const [pts, v] of gf) funcAdd(nf, pts, v);

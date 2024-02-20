@@ -9,9 +9,7 @@ export class CanvasWrapper {
     public elem: HTMLCanvasElement = document.createElement("canvas"),
   ) {
     this.ctx = elem.getContext("2d")!;
-    Object.assign(elem.style, {
-      backgroundColor: Color.background,
-    });
+    elem.style.backgroundColor = Color.background;
   }
 
   get width(): number {

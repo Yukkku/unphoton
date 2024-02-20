@@ -38,9 +38,7 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
     };
     draw();
     cw.onresize = draw;
-    const onmousemove = (e: MouseEvent) => {
-      draw(e.offsetX, e.offsetY);
-    };
+    const onmousemove = (e: MouseEvent) => draw(e.offsetX, e.offsetY);
     const onclick = (e: MouseEvent) => {
       draw(e.offsetX, e.offsetY);
       if (id != null) {

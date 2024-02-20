@@ -133,7 +133,7 @@ export class Stage {
           p[c.charCodeAt(0)] += n;
         }
       }
-      const rot: [number, number][] = [
+      const rot: readonly (readonly [number, number])[] = [
         [0, rcos30 * 2],
         [r * 1.5, rcos30],
         [r * 1.5, 0 - rcos30],

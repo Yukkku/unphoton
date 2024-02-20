@@ -25,6 +25,5 @@ export const isTouching = (
   if (dx < 0) dx *= -1;
   if (dy < 0) dy *= -1;
   if (rcos30 < dx) return false;
-  const rsin30 = r / 2;
-  return (dy - r) * rcos30 + dx * rsin30 <= 0;
+  return (dy - r) * rcos30 + dx * r / 2 <= 0;
 };
