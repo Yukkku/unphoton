@@ -41,20 +41,20 @@ export class CanvasWrapper {
   }
 
   /** 標準的な六角形を描く */
-  hex(x: number, y: number, r = this.r) {
+  ophex(fill: string, stroke: string, x: number, y: number, r = this.r) {
     const path = Hex.path(x, y, r * 0.875);
-    this.ctx.fillStyle = Color.hexFill;
-    this.ctx.strokeStyle = Color.gray;
+    this.ctx.fillStyle = fill;
+    this.ctx.strokeStyle = stroke;
     this.ctx.lineWidth = r / 15;
     this.ctx.fill(path);
     this.ctx.stroke(path);
   }
 
   /** 標準的な六角形を描く */
-  hilightHex(x: number, y: number, r = this.r) {
+  hex(x: number, y: number, r = this.r) {
     const path = Hex.path(x, y, r * 0.875);
     this.ctx.fillStyle = Color.hexFill;
-    this.ctx.strokeStyle = Color.white;
+    this.ctx.strokeStyle = Color.gray;
     this.ctx.lineWidth = r / 15;
     this.ctx.fill(path);
     this.ctx.stroke(path);

@@ -3,6 +3,7 @@
 export const background = "#222";
 export const gray = "#888";
 export const hexFill = "#333";
+export const hoverHexFill = "#555";
 export const white = "#fff";
 export const black = "#000";
 export const mirror = "#ddd";

@@ -84,7 +84,7 @@ export class Stage {
     return this.d.length;
   }
 
-  draw(cw: CanvasWrapper, f?: Func, t = 0) {
+  draw(cw: CanvasWrapper, hl?: Cell, f?: Func, t = 0) {
     const { ctx, r } = cw;
     const rcos30 = r * 0.8660254037844386;
 
@@ -100,8 +100,15 @@ export class Stage {
         const y = i * r * 1.5 + dy;
 
         if (c[0] === CellType.None) continue;
-        if (isMoveable(c[0])) cw.hilightHex(x, y, r);
-        else cw.hex(x, y, r);
+        if (isMoveable(c[0])) {
+          cw.ophex(
+            hl === c ? Color.hoverHexFill : Color.hexFill,
+            Color.white,
+            x,
+            y,
+            r,
+          );
+        } else cw.hex(x, y, r);
 
         switch (c[0]) {
           case CellType.Start:
@@ -271,7 +278,7 @@ export class Stage {
     let last = Date.now();
     const anime = setInterval(() => {
       cw.ctx.reset();
-      this.draw(cw, f, (Date.now() - last) / 300);
+      this.draw(cw, undefined, f, (Date.now() - last) / 300);
     });
     while (!isAccepted(f, this)) {
       await sleep(300);
@@ -284,18 +291,36 @@ export class Stage {
       last = Date.now();
     }
     clearInterval(anime);
-    this.draw(cw, f, 0);
+    this.draw(cw, undefined, f, 0);
     return true;
   }
 
   play(cw: CanvasWrapper) {
     return new Promise<void>((resolve) => {
-      cw.clear();
-      this.draw(cw);
-      const onresize = () => {
+      const redraw = (mx = 0, my = 0) => {
+        const t = this.mouseTouching(cw, mx, my);
         cw.clear();
-        this.draw(cw);
+        this.draw(cw, t);
+        const { ctx, r } = cw;
+        const x = cw.width - r * 1.2;
+        const y = cw.height - r * 1.2;
+        const path = Hex.path(x, y, r * 0.875);
+        ctx.fillStyle = "#232";
+        ctx.strokeStyle = "#0f0";
+        ctx.lineWidth = r / 15;
+        ctx.fill(path);
+        ctx.stroke(path);
+        ctx.fillStyle = "#0c0";
+        ctx.beginPath();
+        ctx.moveTo(x + r / 2, y);
+        ctx.lineTo(x - r / 4, y - r * 0.4330127018922193);
+        ctx.lineTo(x - r / 4, y + r * 0.4330127018922193);
+        ctx.closePath();
+        ctx.fill();
       };
+      redraw();
+      const onresize = redraw;
+      const onmousemove = (e: MouseEvent) => redraw(e.offsetX, e.offsetY);
       const onclick = (e: MouseEvent) => {
         const c = this.mouseTouching(cw, e.offsetX, e.offsetY);
         if (!c) return;
@@ -310,27 +335,28 @@ export class Stage {
             c[1] = !c[1];
             break;
         }
-        cw.clear();
-        this.draw(cw);
+        redraw(e.offsetX, e.offsetY);
       };
       const onkeydown = async (e: KeyboardEvent) => {
         if (e.key !== "Enter") return;
         cw.onresize = undefined;
         window.removeEventListener("keydown", onkeydown);
         cw.elem.removeEventListener("click", onclick);
+        cw.elem.removeEventListener("mousemove", onmousemove);
         if (await this.run(cw)) {
           resolve();
         } else {
           cw.onresize = onresize;
           window.addEventListener("keydown", onkeydown);
           cw.elem.addEventListener("click", onclick);
-          cw.clear();
-          this.draw(cw);
+          cw.elem.addEventListener("mousemove", onmousemove);
+          redraw();
         }
       };
       cw.onresize = onresize;
       window.addEventListener("keydown", onkeydown);
       cw.elem.addEventListener("click", onclick);
+      cw.elem.addEventListener("mousemove", onmousemove);
     });
   }
 }

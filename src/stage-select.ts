@@ -26,7 +26,7 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
           const x = (j * 2 + i % 2) * rcos30 + dx;
           const y = i * r * 1.5 + dy;
           if (Hex.isTouching(mx - x, my - y, r * 0.875)) {
-            cw.hilightHex(x, y);
+            cw.ophex(Color.hoverHexFill, Color.white, x, y);
             cw.text(String(v), x, y, Color.white, `${r * 0.7}px monospace`);
             id = v;
           } else {
