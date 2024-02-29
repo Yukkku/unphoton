@@ -4,12 +4,18 @@ import * as Hex from "./hex.ts";
 export class CanvasWrapper {
   ctx: CanvasRenderingContext2D;
   onresize?: () => void;
+  #mouseX = 0;
+  #mouseY = 0;
 
   constructor(
     public elem: HTMLCanvasElement = document.createElement("canvas"),
   ) {
     this.ctx = elem.getContext("2d")!;
     elem.style.backgroundColor = Color.background;
+    elem.addEventListener("mousemove", (e) => {
+      this.#mouseX = e.offsetX;
+      this.#mouseY = e.offsetY;
+    });
   }
 
   get width(): number {
@@ -17,6 +23,12 @@ export class CanvasWrapper {
   }
   get height(): number {
     return this.elem.height;
+  }
+  get mouseX(): number {
+    return this.#mouseX;
+  }
+  get mouseY(): number {
+    return this.#mouseY;
   }
 
   get r(): number {

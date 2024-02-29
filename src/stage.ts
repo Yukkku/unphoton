@@ -249,9 +249,8 @@ export class Stage {
 
   mouseTouching(
     cw: CanvasWrapper,
-    mx: number,
-    my: number,
   ): MoveableCell | undefined {
+    const { mouseX: mx, mouseY: my } = cw;
     const { r } = cw;
     const rcos30 = r * 0.8660254037844386;
 
@@ -297,19 +296,21 @@ export class Stage {
 
   play(cw: CanvasWrapper) {
     return new Promise<void>((resolve) => {
-      const redraw = (mx = 0, my = 0) => {
-        const t = this.mouseTouching(cw, mx, my);
+      const redraw = () => {
+        const t = this.mouseTouching(cw);
         cw.clear();
         this.draw(cw, t);
         const { ctx, r } = cw;
         const x = cw.width - r * 1.2;
         const y = cw.height - r * 1.2;
-        const path = Hex.path(x, y, r * 0.875);
-        ctx.fillStyle = "#232";
-        ctx.strokeStyle = "#0f0";
-        ctx.lineWidth = r / 15;
-        ctx.fill(path);
-        ctx.stroke(path);
+        cw.ophex(
+          Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875)
+            ? "#252"
+            : "#232",
+          "#0f0",
+          x,
+          y,
+        );
         ctx.fillStyle = "#0c0";
         ctx.beginPath();
         ctx.moveTo(x + r / 2, y);
@@ -320,10 +321,31 @@ export class Stage {
       };
       redraw();
       const onresize = redraw;
-      const onmousemove = (e: MouseEvent) => redraw(e.offsetX, e.offsetY);
-      const onclick = (e: MouseEvent) => {
-        const c = this.mouseTouching(cw, e.offsetX, e.offsetY);
-        if (!c) return;
+      const onmousemove = redraw;
+      const onclick = async () => {
+        const c = this.mouseTouching(cw);
+        if (!c) {
+          if (
+            Hex.isTouching(
+              cw.width - cw.r * 1.2 - cw.mouseX,
+              cw.height - cw.r * 1.2 - cw.mouseY,
+              cw.r * 0.875,
+            )
+          ) {
+            cw.onresize = undefined;
+            cw.elem.removeEventListener("click", onclick);
+            cw.elem.removeEventListener("mousemove", onmousemove);
+            if (await this.run(cw)) {
+              resolve();
+            } else {
+              cw.onresize = onresize;
+              cw.elem.addEventListener("click", onclick);
+              cw.elem.addEventListener("mousemove", onmousemove);
+              redraw();
+            }
+          }
+          return;
+        }
         switch (c[0]) {
           case CellType.MovableMirror:
           case CellType.MovableHalfMirror:
@@ -335,26 +357,9 @@ export class Stage {
             c[1] = !c[1];
             break;
         }
-        redraw(e.offsetX, e.offsetY);
-      };
-      const onkeydown = async (e: KeyboardEvent) => {
-        if (e.key !== "Enter") return;
-        cw.onresize = undefined;
-        window.removeEventListener("keydown", onkeydown);
-        cw.elem.removeEventListener("click", onclick);
-        cw.elem.removeEventListener("mousemove", onmousemove);
-        if (await this.run(cw)) {
-          resolve();
-        } else {
-          cw.onresize = onresize;
-          window.addEventListener("keydown", onkeydown);
-          cw.elem.addEventListener("click", onclick);
-          cw.elem.addEventListener("mousemove", onmousemove);
-          redraw();
-        }
+        redraw();
       };
       cw.onresize = onresize;
-      window.addEventListener("keydown", onkeydown);
       cw.elem.addEventListener("click", onclick);
       cw.elem.addEventListener("mousemove", onmousemove);
     });
