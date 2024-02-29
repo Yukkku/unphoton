@@ -40,5 +40,5 @@ document.body.appendChild(cw.elem);
 for (;;) {
   const id = await stageSelect(cw);
 
-  await new Stage(stages[id - 1]).play(cw);
+  await new Stage(stages[id - 1] ?? []).play(cw);
 }
