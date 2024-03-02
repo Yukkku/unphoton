@@ -1,68 +1,65 @@
-/** @file 量子論に基づいて動きを計算する. このリポジトリの核 */
-
-import { Complex } from "./complex.ts";
 import { CellType, Stage } from "./stage.ts";
 import { assert } from "./util.ts";
+
+/**
+ * 「4294967161で割ったあまり」を用いて0か判定するのにwasmを用いています
+ * ```wat
+ * (module
+ *   (func (export "add") (param i32 i32) (result i32)
+ *     local.get 0
+ *     local.get 0
+ *     i32.const 135
+ *     i32.add
+ *     i32.const -135
+ *     local.get 0
+ *     i32.sub
+ *     local.get 1
+ *     i32.gt_u
+ *     select
+ *     local.get 1
+ *     i32.add
+ *   )
+ *   (func (export "sub") (param i32 i32) (result i32)
+ *     local.get 0
+ *     i32.const 135
+ *     i32.sub
+ *     local.get 0
+ *     local.get 0
+ *     local.get 1
+ *     i32.lt_u
+ *     select
+ *     local.get 1
+ *     i32.sub
+ *   )
+ *   (func (export "mul")(param i32 i32) (result i32)
+ *     local.get 1
+ *     i64.extend_i32_u
+ *     local.get 0
+ *     i64.extend_i32_u
+ *     i64.mul
+ *     i64.const 4294967161
+ *     i64.rem_u
+ *     i32.wrap_i64
+ *   )
+ * )
+ * ```
+ */
+const { add, sub, mul } = (await WebAssembly.instantiate(Uint8Array.from(
+  atob(
+    "AGFzbQEAAAABBwFgAn9/AX8DBAMAAAAHEwMDYWRkAAADc3ViAAEDbXVsAAIKPwMXACAAIABBhwFqQfl+IABrIAFLGyABagsTACAAQYcBayAAIAAgAUkbIAFrCxEAIAGtIACtfkL5/v//D4KnCwAOBG5hbWUCBwMAAAEAAgA=",
+  ),
+  (c) => c.charCodeAt(0),
+))).instance.exports as {
+  add(a: number, b: number): number;
+  sub(a: number, b: number): number;
+  mul(a: number, b: number): number;
+};
 
 /** ステージ横幅の上界 */
 export const UPPER_WIDTH = 104;
 /** ステージ縦幅の上界 */
 export const UPPER_HEIGHT = 104;
 
-export type Func = Map<string, Complex>;
-
-/** 粒子の位置と向きを文字に変換する */
-const pt2char = (x: number, y: number, d: number): string => {
-  return String.fromCharCode((x * UPPER_WIDTH + y) * 6 + d);
-};
-/** 文字を粒子の位置と向きに変換する */
-const char2pt = (c: string): [number, number, number] => {
-  const p = c.charCodeAt(0);
-  return [
-    Math.floor(p / (6 * UPPER_WIDTH)),
-    Math.floor(p / 6) % UPPER_WIDTH,
-    p % 6,
-  ];
-};
-
-/** 文字列を複数の粒子の位置と向きに変換する */
-export const str2pts = (s: string): [number, number, number][] => {
-  return Array.from(s, char2pt);
-};
-
-/** 文字列を複数の粒子の位置と向きに変換する */
-export const pts2str = (pts: [number, number, number][]): string => {
-  return pts.map((pt) => pt2char(pt[0], pt[1], pt[2])).join("");
-};
-
-/** 波動関数に状態を加える */
-const funcAdd = (f: Func, pts: [number, number, number][], v: Complex) => {
-  const s = pts2str(pts);
-  let c = 0;
-  for (let i = 0; i < s.length; i++) {
-    for (let j = i + 1; j < s.length; j++) {
-      if (s[i] === s[j]) return;
-      if (s[i] > s[j]) c ^= 1;
-    }
-  }
-  const ss = s.split("").sort().join("");
-  const l = f.get(ss);
-  if (c === 0) {
-    if (l) {
-      l.chadd(v);
-      if (l.c === 0) f.delete(ss);
-    } else f.set(ss, v);
-  } else {
-    if (l) {
-      l.chsub(v);
-      if (l.c === 0) f.delete(ss);
-    } else {
-      f.set(ss, v.neg());
-    }
-  }
-};
-
-/** 向きを表す0-5と座標の変分の表 */
 const DIRS = [
   [0, 1],
   [1, 0],
@@ -72,11 +69,7 @@ const DIRS = [
   [-1, 1],
 ] as const satisfies [number, number][];
 
-const I = new Complex(0, 1, 36167441);
-const TQ = new Complex(Math.SQRT1_2, Math.SQRT1_2, 2123366577);
-
-const hp = new Complex(0.5, 0.5, 18083721);
-const hm = new Complex(0.5, -0.5, 4276883441);
+export type Func = [string[], Int32Array[]];
 
 export const start = (s: Stage): Func => {
   assert(s.width < UPPER_WIDTH && s.height < UPPER_HEIGHT);
@@ -87,25 +80,38 @@ export const start = (s: Stage): Func => {
     for (let j = 0; j < l.length; j++) {
       const c = l[j];
       if (c[0] === CellType.Start) {
-        p += pt2char(i, j, c[1]);
+        p += String.fromCharCode((i * UPPER_WIDTH + j) * 6 + c[1]);
       }
     }
   }
-  return new Map([[p, new Complex(1, 0, 1)]]);
+  return [[p], [Int32Array.of(1)]];
 };
 
-export const next = (f: Readonly<Func>, s: Stage): Func | null => {
-  const nf: Func = new Map();
-  for (const [str, v] of f) {
-    const pts = str2pts(str);
-    for (const pt of pts) {
-      pt[0] += DIRS[pt[2]][0];
-      pt[1] += DIRS[pt[2]][1];
+export const next = ([x, p]: Func, s: Stage): Func | undefined => {
+  assert(s.width < UPPER_WIDTH && s.height < UPPER_HEIGHT);
+
+  const ss = new Map<string, [number, number, number][]>();
+  for (let i = 0; i < x.length; i++) {
+    const vs: [number, number, number][] = [];
+    const sx = x[i];
+    for (let j = 0; j < sx.length; j++) {
+      const k = sx.charCodeAt(j);
+      const r = k % 6;
+      vs.push([
+        (k / (6 * UPPER_WIDTH) >>> 0) + DIRS[r][0],
+        (k / 6 % UPPER_WIDTH >>> 0) + DIRS[r][1],
+        r,
+      ]);
     }
-    const gf: [[number, number, number][], Complex][] = [[pts, new Complex(v)]];
-    for (const [i, [x, y, _d]] of pts.entries()) {
+    const ky = [vs];
+    const vl = [1];
+    const vr = [1];
+    for (let i = 0; i < vs.length; i++) {
+      const x = vs[i][0];
+      const y = vs[i][1];
+      const r = vs[i][2];
       const c = s.d[x]?.[y];
-      if (c == null) return null;
+      if (c == null) return;
       switch (c[0]) {
         case CellType.Plane:
         case CellType.Start:
@@ -113,20 +119,23 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
           break;
         case CellType.MovableMirror:
         case CellType.Mirror: {
-          const d = (c[1] + 6 - pts[i][2]) % 6;
-          if (pts[i][2] === d) return null;
-          pts[i][2] = d;
+          const d = (c[1] + 6 - r) % 6;
+          if (r === d) return;
+          vs[i][2] = d;
           break;
         }
         case CellType.MovableHalfMirror:
         case CellType.HalfMirror: {
-          const d = (c[1] + 6 - pts[i][2]) % 6;
-          if (pts[i][2] === d) return null;
-          const e: [number, number, number] = [pts[i][0], pts[i][1], d];
-          const len = gf.length;
+          const d = (c[1] + 6 - r) % 6;
+          if (r === d) return;
+          const e: [number, number, number] = [x, y, d];
+          const len = ky.length;
           for (let j = 0; j < len; j++) {
-            gf.push([gf[j][0].with(i, e), gf[j][1].mul(hm)]);
-            gf[j][1].chmul(hp);
+            ky.push(ky[j].with(i, e));
+            vl.push(mul(vl[j], -18083855)); // (1 - i) / 2
+            vr.push(mul(vr[j], 18083721)); // (1 + i) / 2
+            vl[j] = mul(vl[j], 18083721); // (1 + i) / 2
+            vr[j] = mul(vr[j], -18083855); // (1 - i) / 2
           }
           break;
         }
@@ -134,37 +143,115 @@ export const next = (f: Readonly<Func>, s: Stage): Func | null => {
           if (!c[1]) break;
           /* falls through */
         case CellType.Z: {
-          for (let j = 0; j < gf.length; j++) gf[j][1].chneg();
+          for (let j = 0; j < vl.length; j++) {
+            vl[j] = sub(0, vl[j]);
+            vr[j] = sub(0, vr[j]);
+          }
           break;
         }
         case CellType.MovableS:
           if (!c[1]) break;
           /* falls through */
         case CellType.S: {
-          for (let j = 0; j < gf.length; j++) gf[j][1].chmul(I);
+          for (let j = 0; j < vl.length; j++) {
+            vl[j] = mul(vl[j], 36167441); // i
+            vr[j] = mul(vr[j], -36167576); // -i
+          }
           break;
         }
         case CellType.MovableT:
           if (!c[1]) break;
           /* falls through */
         case CellType.T: {
-          for (let j = 0; j < gf.length; j++) gf[j][1].chmul(TQ);
+          for (let j = 0; j < vl.length; j++) {
+            vl[j] = mul(vl[j], -2123366712); // (1 + i) / sqrt(2)
+            vr[j] = mul(vr[j], -452840752); // (1 - i) / sqrt(2)
+          }
           break;
         }
         default:
-          return null;
+          return;
       }
     }
-    for (const [pts, v] of gf) funcAdd(nf, pts, v);
+    a: for (let j = 0; j < ky.length; j++) {
+      const key = ky[j].map((x) =>
+        String.fromCharCode((x[0] * UPPER_WIDTH + x[1]) * 6 + x[2])
+      );
+      let c = 0;
+      for (let k = 0; k < key.length; k++) {
+        for (let l = k + 1; l < key.length; l++) {
+          if (key[k] === key[l]) break a;
+          if (key[k] > key[l]) {
+            const tmp = key[k];
+            key[k] = key[l];
+            key[l] = tmp;
+            c ^= 1;
+          }
+        }
+      }
+      if (c) {
+        vl[j] = sub(0, vl[j]);
+        vr[j] = sub(0, vr[j]);
+      }
+      const s = key.join("");
+      const v = ss.get(s);
+      if (v) {
+        v.push([i, vl[j], vr[j]]);
+      } else {
+        ss.set(s, [[i, vl[j], vr[j]]]);
+      }
+    }
   }
-  return nf;
+  const nx: string[] = [];
+  const nv: [number, number, number][][] = [];
+  for (const v of ss.entries()) {
+    const w = v[1];
+    let c = 0;
+    for (let i = 0; i < w.length; i++) {
+      let d = 0;
+      for (let j = 0; j < w.length; j++) {
+        d = add(d, mul(p[w[i][0]][w[j][0]], w[j][2]));
+      }
+      c = add(c, mul(w[i][1], d));
+    }
+    if (c !== 0) {
+      nx.push(v[0]);
+      nv.push(w);
+    }
+  }
+  const np: Int32Array[] = [];
+  for (let i = 0; i < nv.length; i++) {
+    const a = nv[i];
+    const g = new Int32Array(nv.length);
+    for (let j = 0; j < nv.length; j++) {
+      const b = nv[j];
+      let c = 0;
+      for (let x = 0; x < a.length; x++) {
+        const pp = p[a[x][0]];
+        let d = 0;
+        for (let y = 0; y < b.length; y++) {
+          d = add(d, mul(pp[b[y][0]], b[y][2]));
+        }
+        c = add(c, mul(a[x][1], d));
+      }
+      g[j] = c;
+    }
+    np.push(g);
+  }
+  console.log(nx, np);
+  return [nx, np];
 };
 
-export const isAccepted = (f: Readonly<Func>, s: Stage): boolean => {
-  for (const [str] of f) {
-    for (const [x, y, d] of str2pts(str)) {
+export const isAccepted = ([x]: Readonly<Func>, s: Stage): boolean => {
+  for (let i = 0; i < x.length; i++) {
+    const sx = x[i];
+    for (let j = 0; j < sx.length; j++) {
+      const k = sx.charCodeAt(j);
+      const x = k / (6 * UPPER_WIDTH) >>> 0;
+      const y = k / 6 % UPPER_WIDTH >>> 0;
+      const r = k % 6;
       const c = s.d[x][y];
-      if (c[0] !== CellType.Goal || c[1] !== d) return false;
+      if (c[0] !== CellType.Goal || c[1] !== r) return false;
     }
   }
   return true;
