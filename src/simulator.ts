@@ -1,5 +1,5 @@
 import { CellType, Stage } from "./stage.ts";
-import { assert } from "./util.ts";
+import { assert, todo } from "./util.ts";
 
 /**
  * 「4294967161で割ったあまり」を用いて0か判定するのにwasmを用いています
@@ -69,7 +69,7 @@ const DIRS = [
   [-1, 1],
 ] as const satisfies [number, number][];
 
-export type Func = [string[], Int32Array[]];
+export type Func = [string[], Int32Array[], Float64Array[]];
 
 export const start = (s: Stage): Func => {
   assert(s.width < UPPER_WIDTH && s.height < UPPER_HEIGHT);
@@ -84,13 +84,13 @@ export const start = (s: Stage): Func => {
       }
     }
   }
-  return [[p], [Int32Array.of(1)]];
+  return [[p], [Int32Array.of(1)], [Float64Array.of(1)]];
 };
 
-export const next = ([x, p]: Func, s: Stage): Func | undefined => {
+export const next = ([x, p, q]: Func, s: Stage): Func | undefined => {
   assert(s.width < UPPER_WIDTH && s.height < UPPER_HEIGHT);
 
-  const ss = new Map<string, [number, number, number][]>();
+  const ss = new Map<string, [number, number, number, number, number][]>();
   for (let i = 0; i < x.length; i++) {
     const vs: [number, number, number][] = [];
     const sx = x[i];
@@ -104,8 +104,10 @@ export const next = ([x, p]: Func, s: Stage): Func | undefined => {
       ]);
     }
     const ky = [vs];
-    const vl = [1];
-    const vr = [1];
+    const vl = [1]; // mod素数
+    const vr = [1]; // 共役のmod素数
+    const vx = [1]; // 実部
+    const vy = [0]; // 虚部
     for (let i = 0; i < vs.length; i++) {
       const x = vs[i][0];
       const y = vs[i][1];
@@ -132,10 +134,18 @@ export const next = ([x, p]: Func, s: Stage): Func | undefined => {
           const len = ky.length;
           for (let j = 0; j < len; j++) {
             ky.push(ky[j].with(i, e));
-            vl.push(mul(vl[j], -18083855)); // (1 - i) / 2
-            vr.push(mul(vr[j], 18083721)); // (1 + i) / 2
-            vl[j] = mul(vl[j], 18083721); // (1 + i) / 2
-            vr[j] = mul(vr[j], -18083855); // (1 - i) / 2
+            const n = (vx[j] + vy[j]) / 2;
+            const m = (vx[j] - vy[j]) / 2;
+            // (1 - i) / 2 を掛ける
+            vl.push(mul(vl[j], -18083855));
+            vr.push(mul(vr[j], 18083721));
+            vx.push(n);
+            vy.push(0 - m);
+            // (1 + i) / 2 を掛ける
+            vl[j] = mul(vl[j], 18083721);
+            vr[j] = mul(vr[j], -18083855);
+            vx[j] = m;
+            vy[j] = n;
           }
           break;
         }
@@ -144,8 +154,11 @@ export const next = ([x, p]: Func, s: Stage): Func | undefined => {
           /* falls through */
         case CellType.Z: {
           for (let j = 0; j < vl.length; j++) {
+            // -1 を掛ける
             vl[j] = sub(0, vl[j]);
             vr[j] = sub(0, vr[j]);
+            vx[j] *= -1;
+            vy[j] *= -1;
           }
           break;
         }
@@ -154,8 +167,12 @@ export const next = ([x, p]: Func, s: Stage): Func | undefined => {
           /* falls through */
         case CellType.S: {
           for (let j = 0; j < vl.length; j++) {
-            vl[j] = mul(vl[j], 36167441); // i
-            vr[j] = mul(vr[j], -36167576); // -i
+            // i を掛ける
+            vl[j] = mul(vl[j], 36167441);
+            vr[j] = mul(vr[j], -36167576);
+            const tmp = vx[j];
+            vx[j] = 0 - vy[j];
+            vy[j] = tmp;
           }
           break;
         }
@@ -164,8 +181,12 @@ export const next = ([x, p]: Func, s: Stage): Func | undefined => {
           /* falls through */
         case CellType.T: {
           for (let j = 0; j < vl.length; j++) {
-            vl[j] = mul(vl[j], -2123366712); // (1 + i) / sqrt(2)
-            vr[j] = mul(vr[j], -452840752); // (1 - i) / sqrt(2)
+            // (1 + i) / sqrt 2 を掛ける
+            vl[j] = mul(vl[j], -2123366712);
+            vr[j] = mul(vr[j], -452840752);
+            const tmp = (vx[j] + vy[j]) * Math.SQRT1_2;
+            vx[j] = (vx[j] - vy[j]) * Math.SQRT1_2;
+            vy[j] = tmp;
           }
           break;
         }
@@ -189,28 +210,28 @@ export const next = ([x, p]: Func, s: Stage): Func | undefined => {
           }
         }
       }
-      if (c) {
-        vl[j] = sub(0, vl[j]);
-        vr[j] = sub(0, vr[j]);
-      }
+      const t: [number, number, number, number, number] = c
+        ? [i, sub(0, vl[j]), sub(0, vr[j]), 0 - vx[j], 0 - vy[j]]
+        : [i, vl[j], vr[j], vx[j], vy[j]];
       const s = key.join("");
       const v = ss.get(s);
       if (v) {
-        v.push([i, vl[j], vr[j]]);
+        v.push(t);
       } else {
-        ss.set(s, [[i, vl[j], vr[j]]]);
+        ss.set(s, [t]);
       }
     }
   }
   const nx: string[] = [];
-  const nv: [number, number, number][][] = [];
+  const nv: [number, number, number, number, number][][] = [];
   for (const v of ss.entries()) {
     const w = v[1];
     let c = 0;
     for (let i = 0; i < w.length; i++) {
+      const v = w[i][0];
       let d = 0;
       for (let j = 0; j < w.length; j++) {
-        d = add(d, mul(p[w[i][0]][w[j][0]], w[j][2]));
+        d = add(d, mul(p[v][w[j][0]], w[j][2]));
       }
       c = add(c, mul(w[i][1], d));
     }
@@ -220,26 +241,39 @@ export const next = ([x, p]: Func, s: Stage): Func | undefined => {
     }
   }
   const np: Int32Array[] = [];
+  const nq: Float64Array[] = [];
   for (let i = 0; i < nv.length; i++) {
     const a = nv[i];
     const g = new Int32Array(nv.length);
+    const h = new Float64Array(nv.length);
     for (let j = 0; j < nv.length; j++) {
       const b = nv[j];
       let c = 0;
+      let e = 0;
       for (let x = 0; x < a.length; x++) {
-        const pp = p[a[x][0]];
+        const ax = a[x][0];
+        const pp = p[ax];
+        const pq = q[ax];
         let d = 0;
+        let f = 0;
+        let g = 0;
         for (let y = 0; y < b.length; y++) {
-          d = add(d, mul(pp[b[y][0]], b[y][2]));
+          const by = b[y][0];
+          d = add(d, mul(pp[by], b[y][2]));
+          f += pq[by] * b[y][3] - q[by][ax] * b[y][4];
+          g += q[by][ax] * b[y][3] + pq[by] * b[y][4];
         }
         c = add(c, mul(a[x][1], d));
+        e += f * a[x][3] + g * a[x][4];
       }
       g[j] = c;
+      h[j] = e;
     }
     np.push(g);
+    nq.push(h);
   }
-  console.log(nx, np);
-  return [nx, np];
+  console.log(nx, np, nq);
+  return [nx, np, nq];
 };
 
 export const isAccepted = ([x]: Readonly<Func>, s: Stage): boolean => {

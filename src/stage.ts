@@ -135,9 +135,10 @@ export class Stage {
     if (f) {
       const p = new Float64Array(65536);
       for (let i = 0; i < f[0].length; i++) {
+        const n = f[2][i][i];
         const s = f[0][i];
         for (let i = 0; i < s.length; i++) {
-          p[s.charCodeAt(i)] = 1; // TODO: 観測確率に応じて透明にする
+          p[s.charCodeAt(i)] += n;
         }
       }
       const rot: readonly (readonly [number, number])[] = [
