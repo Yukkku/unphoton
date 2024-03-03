@@ -1,5 +1,5 @@
 import { CellType, Stage } from "./stage.ts";
-import { assert, todo } from "./util.ts";
+import { assert } from "./util.ts";
 
 /**
  * 「4294967161で割ったあまり」を用いて0か判定するのにwasmを用いています
@@ -272,7 +272,6 @@ export const next = ([x, p, q]: Func, s: Stage): Func | undefined => {
     np.push(g);
     nq.push(h);
   }
-  console.log(nx, np, nq);
   return [nx, np, nq];
 };
 
