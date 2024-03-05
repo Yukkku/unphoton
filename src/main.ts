@@ -4,17 +4,6 @@ import { Stage } from "./stage.ts";
 import { stageSelect } from "./stage-select.ts";
 import { stages } from "./stage-storage.ts";
 
-Object.assign(document.body.style, {
-  margin: "0",
-  backgroundColor: "#000",
-  width: "100vw",
-  height: "100vh",
-
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-});
-
 const cw = new CanvasWrapper();
 
 { // windowのサイズ変更用の処理
