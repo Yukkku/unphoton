@@ -3,6 +3,7 @@ import * as Color from "./color.ts";
 import { Func, isAccepted, next, start, UPPER_WIDTH } from "./simulator.ts";
 import { sleep } from "./util.ts";
 import * as Hex from "./hex.ts";
+import { show } from "./dialog.ts";
 
 export enum CellType {
   None,
@@ -297,6 +298,8 @@ export class Stage {
 
   play(cw: CanvasWrapper) {
     return new Promise<void>((resolve) => {
+      const beginTime = Date.now();
+      let clickCount = 0;
       const redraw = () => {
         const t = this.mouseTouching(cw);
         cw.clear();
@@ -324,6 +327,7 @@ export class Stage {
       const onresize = redraw;
       const onmousemove = redraw;
       const onclick = async () => {
+        const endTime = Date.now();
         const c = this.mouseTouching(cw);
         if (!c) {
           if (
@@ -333,10 +337,15 @@ export class Stage {
               cw.r * 0.875,
             )
           ) {
+            clickCount += 1;
             cw.onresize = undefined;
             cw.elem.removeEventListener("click", onclick);
             cw.elem.removeEventListener("mousemove", onmousemove);
             if (await this.run(cw)) {
+              this.draw(cw);
+              cw.onresize = () => this.draw(cw);
+              await show(endTime - beginTime, clickCount);
+              cw.onresize = undefined;
               resolve();
             } else {
               cw.onresize = onresize;
@@ -347,6 +356,7 @@ export class Stage {
           }
           return;
         }
+        clickCount += 1;
         switch (c[0]) {
           case CellType.MovableMirror:
           case CellType.MovableHalfMirror:
