@@ -55,6 +55,7 @@ export const show = (time: number, count: number) =>
       close.addEventListener("click", () => {
         resolve();
         dialog.close();
+        dialog.remove();
       });
       cushion.appendChild(close);
     }
