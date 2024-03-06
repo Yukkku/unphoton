@@ -107,22 +107,31 @@ export const stages = [
   ],
   [ // 5
     [
-      [CellType.Start, 0],
+      [CellType.None],
+      [CellType.None],
+      [CellType.Start, 1],
+    ],
+    [
+      [CellType.None],
+      [CellType.None],
+      [CellType.Plane],
+    ],
+    [
       [CellType.Goal, 3],
-      [CellType.MovableHalfMirror, 2],
       [CellType.Plane],
-      [CellType.Mirror, 2],
+      [CellType.MovableHalfMirror, 1],
+      [CellType.Plane],
+      [CellType.Mirror, 3],
     ],
     [
       [CellType.None],
       [CellType.None],
       [CellType.Plane],
-      [CellType.Plane],
     ],
     [
       [CellType.None],
       [CellType.None],
-      [CellType.Mirror, 0],
+      [CellType.Mirror, 5],
     ],
   ],
   [ // 6
