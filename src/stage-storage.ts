@@ -119,7 +119,7 @@ export const stages = [
     [
       [CellType.Goal, 3],
       [CellType.Plane],
-      [CellType.MovableHalfMirror, 1],
+      [CellType.MovableHalfMirror, 3],
       [CellType.Plane],
       [CellType.Mirror, 3],
     ],
