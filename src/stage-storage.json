@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Tutorial 1",
+    "field": [
+      "p0....m2",
+      "     ..",
+      "    M5....q0"
+    ]
+  },
+  {
+    "name": "Tutorial 2",
+    "field": [
+      "M1..M3",
+      " ....",
+      "  q3..M5",
+      " ......",
+      "p5  M4"
+    ]
+  },
+  {
+    "name": "Snow",
+    "field": [
+      "   m0",
+      "m4M5m1m2",
+      " p4m0q4",
+      "m2m1m5m4",
+      "   m0"
+    ]
+  },
+  {
+    "name": "Half Mirror",
+    "field": [
+      "p1  q5",
+      " ....",
+      "  h3",
+      "   ..",
+      "    q1"
+    ]
+  },
+  {
+    "name": "Michelson Imitation",
+    "field": [
+      "  p1",
+      "   ..",
+      "q3..H3..m3",
+      "     ..",
+      "      m5"
+    ]
+  },
+  {
+    "name": "Mach-Zehnder Imitation",
+    "field": [
+      "p0..h2..m2",
+      "   ..  ..",
+      "  M0..H3..q0"
+    ]
+  },
+  {
+    "name": "Z Gate",
+    "field": [
+      "p0..h2Z0m2",
+      "   ..  ..",
+      "  M0z1h2..q0"
+    ]
+  },
+  {
+    "name": "Counting Backwards",
+    "field": [
+      "p0..h2..h2s1m2",
+      "   ..  S1  z1",
+      "  h2S1..Z1h2",
+      " S1  Z1  ..",
+      "m2Z1h2..h2..q0"
+    ]
+  },
+  {
+    "name": "Cousin",
+    "field": [
+      "p1  m0  m1",
+      " ..T1..T1",
+      "  h0  h0",
+      " ..S1..S1",
+      "q2  m0  m5"
+    ]
+  },
+  {
+    "name": "Infinity",
+    "field": [
+      "  m5p0m1  m5S1m1",
+      " T1    h5h1    ..",
+      "m3      ..      m3",
+      " Z1    ....    t1",
+      "  m1s1m5  m1q3m5"
+    ]
+  },
+  {
+    "name": "Three Half Mirrors",
+    "field": [
+      "m4p0H5m1",
+      " ..  m1H3m1",
+      "  ..    m1H3",
+      "   h4......m4",
+      "    q1"
+    ]
+  }
+]
