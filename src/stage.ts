@@ -3,7 +3,6 @@ import * as Color from "./color.ts";
 import { Func, isAccepted, next, start, UPPER_WIDTH } from "./simulator.ts";
 import { sleep } from "./util.ts";
 import * as Hex from "./hex.ts";
-import { show } from "./dialog.ts";
 
 export enum CellType {
   None,
@@ -300,10 +299,6 @@ export class Stage {
             cw.elem.removeEventListener("click", onclick);
             cw.elem.removeEventListener("mousemove", onmousemove);
             if (await this.run(cw)) {
-              this.draw(cw);
-              cw.onresize = () => this.draw(cw);
-              await show(endTime - beginTime, clickCount);
-              cw.onresize = undefined;
               resolve();
             } else {
               cw.onresize = onresize;
