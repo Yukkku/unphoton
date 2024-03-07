@@ -80,7 +80,7 @@ export const start = (s: Stage): Func => {
     for (let j = 0; j < l.length; j++) {
       const c = l[j];
       if (c[0] === CellType.Start) {
-        p += String.fromCharCode((i * UPPER_WIDTH + j) * 6 + c[1]);
+        p += String.fromCharCode((i * UPPER_WIDTH + j) * 6 + c[2]);
       }
     }
   }
@@ -119,16 +119,14 @@ export const next = ([x, p, q]: Func, s: Stage): Func | undefined => {
         case CellType.Start:
         case CellType.Goal:
           break;
-        case CellType.MovableMirror:
         case CellType.Mirror: {
-          const d = (c[1] + 6 - r) % 6;
+          const d = (c[2] + 6 - r) % 6;
           if (r === d) return;
           vs[i][2] = d;
           break;
         }
-        case CellType.MovableHalfMirror:
         case CellType.HalfMirror: {
-          const d = (c[1] + 6 - r) % 6;
+          const d = (c[2] + 6 - r) % 6;
           if (r === d) return;
           const e: [number, number, number] = [x, y, d];
           const len = ky.length;
@@ -149,10 +147,8 @@ export const next = ([x, p, q]: Func, s: Stage): Func | undefined => {
           }
           break;
         }
-        case CellType.MovableZ:
-          if (!c[1]) break;
-          /* falls through */
         case CellType.Z: {
+          if (!c[2]) break;
           for (let j = 0; j < vl.length; j++) {
             // -1 を掛ける
             vl[j] = sub(0, vl[j]);
@@ -162,10 +158,8 @@ export const next = ([x, p, q]: Func, s: Stage): Func | undefined => {
           }
           break;
         }
-        case CellType.MovableS:
-          if (!c[1]) break;
-          /* falls through */
         case CellType.S: {
+          if (!c[2]) break;
           for (let j = 0; j < vl.length; j++) {
             // i を掛ける
             vl[j] = mul(vl[j], 36167441);
@@ -176,10 +170,8 @@ export const next = ([x, p, q]: Func, s: Stage): Func | undefined => {
           }
           break;
         }
-        case CellType.MovableT:
-          if (!c[1]) break;
-          /* falls through */
         case CellType.T: {
+          if (!c[2]) break;
           for (let j = 0; j < vl.length; j++) {
             // (1 + i) / sqrt 2 を掛ける
             vl[j] = mul(vl[j], -2123366712);
@@ -284,7 +276,7 @@ export const isAccepted = ([x]: Readonly<Func>, s: Stage): boolean => {
       const y = k / 6 % UPPER_WIDTH >>> 0;
       const r = k % 6;
       const c = s.d[x][y];
-      if (c[0] !== CellType.Goal || c[1] !== r) return false;
+      if (c[0] !== CellType.Goal || c[2] !== r) return false;
     }
   }
   return true;

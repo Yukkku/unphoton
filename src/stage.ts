@@ -10,45 +10,23 @@ export enum CellType {
   Plane,
   Start,
   Goal,
-  MovableMirror,
   Mirror,
   HalfMirror,
-  MovableHalfMirror,
   Z,
   S,
   T,
-  MovableZ,
-  MovableS,
-  MovableT,
 }
-
-type MoveableCellType =
-  | CellType.MovableMirror
-  | CellType.MovableHalfMirror
-  | CellType.MovableZ
-  | CellType.MovableS
-  | CellType.MovableT;
-
-const isMoveable = (v: CellType): v is MoveableCellType =>
-  v === CellType.MovableMirror ||
-  v === CellType.MovableHalfMirror ||
-  v === CellType.MovableZ ||
-  v === CellType.MovableS ||
-  v === CellType.MovableT;
 
 export type Cell =
   | [CellType.None]
   | [CellType.Plane]
-  | readonly [CellType.Start | CellType.Goal, 0 | 1 | 2 | 3 | 4 | 5]
-  | readonly [CellType.Mirror | CellType.HalfMirror, 0 | 1 | 2 | 3 | 4 | 5]
-  | [
-    CellType.MovableMirror | CellType.MovableHalfMirror,
-    0 | 1 | 2 | 3 | 4 | 5,
-  ]
-  | [CellType.Z | CellType.S | CellType.T]
-  | [CellType.MovableZ | CellType.MovableS | CellType.MovableT, boolean];
-
-type MoveableCell = Cell & { 0: MoveableCellType };
+  | [CellType.Start, 0, 0 | 1 | 2 | 3 | 4 | 5]
+  | [CellType.Goal, 0, 0 | 1 | 2 | 3 | 4 | 5]
+  | [CellType.Mirror, 0 | 1, 0 | 1 | 2 | 3 | 4 | 5]
+  | [CellType.HalfMirror, 0 | 1, 0 | 1 | 2 | 3 | 4 | 5]
+  | [CellType.Z, 0 | 1, 0 | 1]
+  | [CellType.S, 0 | 1, 0 | 1]
+  | [CellType.T, 0 | 1, 0 | 1];
 
 export class Stage {
   d: readonly (readonly Cell[])[];
@@ -101,7 +79,7 @@ export class Stage {
         const y = i * r * 1.5 + dy;
 
         if (c[0] === CellType.None) continue;
-        if (isMoveable(c[0])) {
+        if (c[1]) {
           cw.ophex(
             hl === c ? Color.hoverHexFill : Color.hexFill,
             Color.white,
@@ -114,8 +92,8 @@ export class Stage {
         switch (c[0]) {
           case CellType.Start:
           case CellType.Goal: {
-            const srsin = r * Math.sin(c[1] * Math.PI / 3) / 2;
-            const srcos = r * Math.cos(c[1] * Math.PI / 3) / 2;
+            const srsin = r * Math.sin(c[2] * Math.PI / 3) / 2;
+            const srcos = r * Math.cos(c[2] * Math.PI / 3) / 2;
             ctx.beginPath();
             ctx.moveTo(x + srsin, y - srcos);
             ctx.lineTo(x + srcos, y + srsin);
@@ -182,10 +160,9 @@ export class Stage {
         const y = i * r * 1.5 + dy;
 
         switch (c[0]) {
-          case CellType.MovableMirror:
           case CellType.Mirror: {
-            const srsin = r * Math.sin(c[1] * Math.PI / 6) / 2;
-            const srcos = r * Math.cos(c[1] * Math.PI / 6) / 2;
+            const srsin = r * Math.sin(c[2] * Math.PI / 6) / 2;
+            const srcos = r * Math.cos(c[2] * Math.PI / 6) / 2;
             ctx.beginPath();
             ctx.moveTo(x + srcos, y + srsin);
             ctx.lineTo(x - srcos, y - srsin);
@@ -194,10 +171,9 @@ export class Stage {
             ctx.stroke();
             break;
           }
-          case CellType.MovableHalfMirror:
           case CellType.HalfMirror: {
-            const srsin = r * Math.sin(c[1] * Math.PI / 6) / 2;
-            const srcos = r * Math.cos(c[1] * Math.PI / 6) / 2;
+            const srsin = r * Math.sin(c[2] * Math.PI / 6) / 2;
+            const srcos = r * Math.cos(c[2] * Math.PI / 6) / 2;
             ctx.beginPath();
             ctx.moveTo(x + srcos, y + srsin);
             ctx.lineTo(x + srcos / 4, y + srsin / 4);
@@ -209,37 +185,19 @@ export class Stage {
             break;
           }
           case CellType.Z: {
-            ctx.fillStyle = Color.zGate;
+            ctx.fillStyle = c[2] ? Color.zGate : Color.gray;
             ctx.fill(Hex.path(x, y, r / 2));
             cw.text("Z", x, y, Color.black, `${r / 2}px monospace`);
             break;
           }
           case CellType.S: {
-            ctx.fillStyle = Color.sGate;
+            ctx.fillStyle = c[2] ? Color.sGate : Color.gray;
             ctx.fill(Hex.path(x, y, r / 2));
             cw.text("S", x, y, Color.black, `${r / 2}px monospace`);
             break;
           }
           case CellType.T: {
-            ctx.fillStyle = Color.tGate;
-            ctx.fill(Hex.path(x, y, r / 2));
-            cw.text("T", x, y, Color.black, `${r / 2}px monospace`);
-            break;
-          }
-          case CellType.MovableZ: {
-            ctx.fillStyle = c[1] ? Color.zGate : Color.gray;
-            ctx.fill(Hex.path(x, y, r / 2));
-            cw.text("Z", x, y, Color.black, `${r / 2}px monospace`);
-            break;
-          }
-          case CellType.MovableS: {
-            ctx.fillStyle = c[1] ? Color.sGate : Color.gray;
-            ctx.fill(Hex.path(x, y, r / 2));
-            cw.text("S", x, y, Color.black, `${r / 2}px monospace`);
-            break;
-          }
-          case CellType.MovableT: {
-            ctx.fillStyle = c[1] ? Color.tGate : Color.gray;
+            ctx.fillStyle = c[2] ? Color.tGate : Color.gray;
             ctx.fill(Hex.path(x, y, r / 2));
             cw.text("T", x, y, Color.black, `${r / 2}px monospace`);
             break;
@@ -251,7 +209,7 @@ export class Stage {
 
   mouseTouching(
     cw: CanvasWrapper,
-  ): MoveableCell | undefined {
+  ): Cell | undefined {
     const { mouseX: mx, mouseY: my } = cw;
     const { r } = cw;
     const rcos30 = r * 0.8660254037844386;
@@ -267,8 +225,8 @@ export class Stage {
         const x = (j * 2 + i) * rcos30 + dx;
         const y = i * r * 1.5 + dy;
 
-        if (isMoveable(c[0]) && Hex.isTouching(mx - x, my - y, r * 0.875)) {
-          return c as MoveableCell;
+        if (c[1] && Hex.isTouching(mx - x, my - y, r * 0.875)) {
+          return c;
         }
       }
     }
@@ -358,14 +316,14 @@ export class Stage {
         }
         clickCount += 1;
         switch (c[0]) {
-          case CellType.MovableMirror:
-          case CellType.MovableHalfMirror:
-            c[1] = (c[1] + 1) % 6 as 0 | 1 | 2 | 3 | 4 | 5;
+          case CellType.Mirror:
+          case CellType.HalfMirror:
+            c[2] = (c[2] + 1) % 6 as 0 | 1 | 2 | 3 | 4 | 5;
             break;
-          case CellType.MovableZ:
-          case CellType.MovableS:
-          case CellType.MovableT:
-            c[1] = !c[1];
+          case CellType.Z:
+          case CellType.S:
+          case CellType.T:
+            c[2] ^= 1;
             break;
         }
         redraw();
