@@ -101,5 +101,5 @@ const parse = (v: string[]) => {
 for (;;) {
   const id = await stageSelect(cw);
 
-  await new Stage(parse(Stages[id - 1].field)).play(cw);
+  await new Stage(parse(Stages[id].field)).play(cw);
 }
