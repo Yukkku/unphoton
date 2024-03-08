@@ -262,23 +262,44 @@ export class Stage {
         cw.clear();
         this.draw(cw, t);
         const { ctx, r } = cw;
-        const x = cw.width - r * 1.2;
-        const y = cw.height - r * 1.2;
-        cw.ophex(
-          Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875)
-            ? "#252"
-            : "#232",
-          "#0f0",
-          x,
-          y,
-        );
-        ctx.fillStyle = "#0c0";
-        ctx.beginPath();
-        ctx.moveTo(x + r / 2, y);
-        ctx.lineTo(x - r / 4, y - r * 0.4330127018922193);
-        ctx.lineTo(x - r / 4, y + r * 0.4330127018922193);
-        ctx.closePath();
-        ctx.fill();
+        {
+          const x = cw.width - r * 1.2;
+          const y = cw.height - r * 1.2;
+          cw.ophex(
+            Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875)
+              ? "#252"
+              : "#232",
+            "#0f0",
+            x,
+            y,
+          );
+          ctx.fillStyle = "#0c0";
+          ctx.beginPath();
+          ctx.moveTo(x + r / 2, y);
+          ctx.lineTo(x - r / 4, y - r * 0.4330127018922193);
+          ctx.lineTo(x - r / 4, y + r * 0.4330127018922193);
+          ctx.closePath();
+          ctx.fill();
+        }
+        {
+          const x = r * 1.2;
+          const y = cw.height - r * 1.2;
+          const e = Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875);
+          cw.ophex(
+            e ? Color.hoverHexFill : Color.hexFill,
+            e ? Color.white : Color.gray,
+            x,
+            y,
+          );
+          ctx.beginPath();
+          ctx.moveTo(x + r / 3, y + r / 3);
+          ctx.lineTo(x - r / 3, y - r / 3);
+          ctx.moveTo(x + r / 3, y - r / 3);
+          ctx.lineTo(x - r / 3, y + r / 3);
+          ctx.strokeStyle = Color.white;
+          ctx.lineWidth = r / 15;
+          ctx.stroke();
+        }
       };
       redraw();
       const onresize = redraw;
@@ -307,6 +328,18 @@ export class Stage {
               cw.elem.addEventListener("mousemove", onmousemove);
               redraw();
             }
+          }
+          if (
+            Hex.isTouching(
+              cw.r * 1.2 - cw.mouseX,
+              cw.height - cw.r * 1.2 - cw.mouseY,
+              cw.r * 0.875,
+            )
+          ) {
+            cw.onresize = undefined;
+            cw.elem.removeEventListener("click", onclick);
+            cw.elem.removeEventListener("mousemove", onmousemove);
+            resolve();
           }
           return;
         }
