@@ -1,7 +1,6 @@
 import { CanvasWrapper } from "./canvas-wrapper.ts";
 import * as Color from "./color.ts";
 import { Func, isAccepted, next, start, UPPER_WIDTH } from "./simulator.ts";
-import { sleep } from "./util.ts";
 import * as Hex from "./hex.ts";
 
 export enum CellType {
