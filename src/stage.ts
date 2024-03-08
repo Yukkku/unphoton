@@ -102,7 +102,7 @@ export class Stage {
             ctx.strokeStyle = c[0] === CellType.Start
               ? Color.start
               : Color.goal;
-            ctx.lineWidth = r / 8;
+            ctx.lineWidth = r / 15;
             ctx.stroke();
             break;
           }
@@ -139,7 +139,7 @@ export class Stage {
             ctx.arc(
               x + rot[d][1] * t,
               y + rot[d][0] * t,
-              r / 5,
+              r / 7,
               0,
               Math.PI * 2,
             );
@@ -166,7 +166,7 @@ export class Stage {
             ctx.moveTo(x + srcos, y + srsin);
             ctx.lineTo(x - srcos, y - srsin);
             ctx.strokeStyle = Color.mirror;
-            ctx.lineWidth = r / 8;
+            ctx.lineWidth = r / 15;
             ctx.stroke();
             break;
           }
@@ -175,11 +175,11 @@ export class Stage {
             const srcos = r * Math.cos(c[2] * Math.PI / 6) / 2;
             ctx.beginPath();
             ctx.moveTo(x + srcos, y + srsin);
-            ctx.lineTo(x + srcos / 4, y + srsin / 4);
+            ctx.lineTo(x + srcos / 6, y + srsin / 6);
             ctx.moveTo(x - srcos, y - srsin);
-            ctx.lineTo(x - srcos / 4, y - srsin / 4);
+            ctx.lineTo(x - srcos / 6, y - srsin / 6);
             ctx.strokeStyle = Color.mirror;
-            ctx.lineWidth = r / 8;
+            ctx.lineWidth = r / 15;
             ctx.stroke();
             break;
           }

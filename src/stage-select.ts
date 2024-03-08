@@ -10,11 +10,11 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
       id = undefined;
       cw.clear();
       cw.text(
-        "Unphoton",
+        "- Unphoton -",
         cw.width / 2,
         cw.width / 15,
         Color.white,
-        `600 ${cw.width / 20}px serif`,
+        `300 ${cw.r * 1.2}px monospace`,
       );
       const r = cw.r;
       const rcos30 = r * 0.8660254037844386;
@@ -30,18 +30,30 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
             cw.hex(x, y);
           } else if (Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875)) {
             cw.ophex(Color.hoverHexFill, Color.white, x, y);
-            cw.text(String(v + 1), x, y, Color.white, `${r * 0.7}px monospace`);
+            cw.text(
+              String(v + 1),
+              x,
+              y,
+              Color.white,
+              `300 ${r * 0.7}px monospace`,
+            );
             cw.text(
               Stages[v]?.name,
               cw.width / 2,
               cw.width / 2,
               Color.white,
-              `${r}px monospace`,
+              `300 ${r * 0.7}px monospace`,
             );
             id = v;
           } else {
             cw.hex(x, y);
-            cw.text(String(v + 1), x, y, Color.gray, `${r * 0.7}px monospace`);
+            cw.text(
+              String(v + 1),
+              x,
+              y,
+              Color.gray,
+              `300 ${r * 0.7}px monospace`,
+            );
           }
         }
       }

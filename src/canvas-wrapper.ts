@@ -57,7 +57,7 @@ export class CanvasWrapper {
     const path = Hex.path(x, y, r * 0.875);
     this.ctx.fillStyle = fill;
     this.ctx.strokeStyle = stroke;
-    this.ctx.lineWidth = r / 15;
+    this.ctx.lineWidth = r / 20;
     this.ctx.fill(path);
     this.ctx.stroke(path);
   }
@@ -67,7 +67,7 @@ export class CanvasWrapper {
     const path = Hex.path(x, y, r * 0.875);
     this.ctx.fillStyle = Color.hexFill;
     this.ctx.strokeStyle = Color.gray;
-    this.ctx.lineWidth = r / 15;
+    this.ctx.lineWidth = r / 20;
     this.ctx.fill(path);
     this.ctx.stroke(path);
   }
