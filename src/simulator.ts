@@ -147,6 +147,14 @@ export const next = ([x, p, q]: Func, s: Stage): Func | undefined => {
           }
           break;
         }
+        case CellType.CMirror: {
+          const d = (c[2] + 6 - r) % 6;
+          if (r === d) break;
+          if (
+            vs.some((v) => v[0] === x && v[1] === y && v[2] * 2 % 6 === c[2])
+          ) vs[i][2] = d;
+          break;
+        }
         case CellType.Z: {
           if (!c[2]) break;
           for (let j = 0; j < vl.length; j++) {

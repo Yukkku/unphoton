@@ -13,18 +13,19 @@ export enum CellType {
   Z,
   S,
   T,
+  CMirror,
 }
 
 export type Cell =
   | [CellType.None]
   | [CellType.Plane]
-  | [CellType.Start, 0, 0 | 1 | 2 | 3 | 4 | 5]
-  | [CellType.Goal, 0, 0 | 1 | 2 | 3 | 4 | 5]
-  | [CellType.Mirror, 0 | 1, 0 | 1 | 2 | 3 | 4 | 5]
-  | [CellType.HalfMirror, 0 | 1, 0 | 1 | 2 | 3 | 4 | 5]
-  | [CellType.Z, 0 | 1, 0 | 1]
-  | [CellType.S, 0 | 1, 0 | 1]
-  | [CellType.T, 0 | 1, 0 | 1];
+  | [CellType.Start | CellType.Goal, 0, 0 | 1 | 2 | 3 | 4 | 5]
+  | [
+    CellType.Mirror | CellType.HalfMirror | CellType.CMirror,
+    0 | 1,
+    0 | 1 | 2 | 3 | 4 | 5,
+  ]
+  | [CellType.Z | CellType.S | CellType.T, 0 | 1, 0 | 1];
 
 export class Stage {
   d: readonly (readonly Cell[])[];
@@ -177,6 +178,19 @@ export class Stage {
             ctx.lineTo(x + srcos / 6, y + srsin / 6);
             ctx.moveTo(x - srcos, y - srsin);
             ctx.lineTo(x - srcos / 6, y - srsin / 6);
+            ctx.strokeStyle = Color.mirror;
+            ctx.lineWidth = r / 15;
+            ctx.stroke();
+            break;
+          }
+          case CellType.CMirror: {
+            const srsin = r * Math.sin(c[2] * Math.PI / 6) / 2;
+            const srcos = r * Math.cos(c[2] * Math.PI / 6) / 2;
+            ctx.beginPath();
+            ctx.moveTo(x + srcos + srsin / 5, y + srsin - srcos / 5);
+            ctx.lineTo(x - srcos + srsin / 5, y - srsin - srcos / 5);
+            ctx.moveTo(x + srcos - srsin / 5, y + srsin + srcos / 5);
+            ctx.lineTo(x - srcos - srsin / 5, y - srsin + srcos / 5);
             ctx.strokeStyle = Color.mirror;
             ctx.lineWidth = r / 15;
             ctx.stroke();
@@ -381,6 +395,7 @@ export class Stage {
         switch (c[0]) {
           case CellType.Mirror:
           case CellType.HalfMirror:
+          case CellType.CMirror:
             c[2] = (c[2] + 1) % 6 as 0 | 1 | 2 | 3 | 4 | 5;
             break;
           case CellType.Z:

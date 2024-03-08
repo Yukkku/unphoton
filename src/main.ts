@@ -70,6 +70,12 @@ const parse = (v: string[]) => {
         case "H":
           e.push([CellType.HalfMirror, 1, y as 0 | 1 | 2 | 3 | 4 | 5]);
           break;
+        case "c":
+          e.push([CellType.CMirror, 0, y as 0 | 1 | 2 | 3 | 4 | 5]);
+          break;
+        case "C":
+          e.push([CellType.CMirror, 1, y as 0 | 1 | 2 | 3 | 4 | 5]);
+          break;
         case "z":
           e.push([CellType.Z, 0, y as 0 | 1]);
           break;
