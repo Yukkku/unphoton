@@ -186,19 +186,19 @@ export class Stage {
           case CellType.Z: {
             ctx.fillStyle = c[2] ? Color.zGate : Color.gray;
             ctx.fill(Hex.path(x, y, r / 2));
-            cw.text("Z", x, y, Color.black, `${r / 2}px monospace`);
+            cw.text("Z", x, y, Color.black, `300 ${r / 2}px monospace`);
             break;
           }
           case CellType.S: {
             ctx.fillStyle = c[2] ? Color.sGate : Color.gray;
             ctx.fill(Hex.path(x, y, r / 2));
-            cw.text("S", x, y, Color.black, `${r / 2}px monospace`);
+            cw.text("S", x, y, Color.black, `300 ${r / 2}px monospace`);
             break;
           }
           case CellType.T: {
             ctx.fillStyle = c[2] ? Color.tGate : Color.gray;
             ctx.fill(Hex.path(x, y, r / 2));
-            cw.text("T", x, y, Color.black, `${r / 2}px monospace`);
+            cw.text("T", x, y, Color.black, `300 ${r / 2}px monospace`);
             break;
           }
         }
@@ -299,6 +299,7 @@ export class Stage {
             cw.elem.removeEventListener("click", onclick);
             cw.elem.removeEventListener("mousemove", onmousemove);
             if (await this.run(cw)) {
+              await this.accepted(cw, endTime - beginTime, clickCount);
               resolve();
             } else {
               cw.onresize = onresize;
@@ -326,6 +327,51 @@ export class Stage {
       cw.onresize = onresize;
       cw.elem.addEventListener("click", onclick);
       cw.elem.addEventListener("mousemove", onmousemove);
+    });
+  }
+
+  accepted(cw: CanvasWrapper, t: number, c: number) {
+    return new Promise<void>((resolve) => {
+      const d = () => {
+        cw.clear();
+        cw.text(
+          "Accepted",
+          cw.width / 2,
+          cw.height / 4,
+          Color.white,
+          `300 ${cw.r}px monospace`,
+        );
+        cw.ctx.beginPath();
+        cw.ctx.moveTo(cw.width * 0.38, cw.height / 4 + cw.r * 0.6);
+        cw.ctx.lineTo(cw.width * 0.62, cw.height / 4 + cw.r * 0.6);
+        cw.ctx.strokeStyle = Color.white;
+        cw.ctx.lineWidth = cw.r / 20;
+        cw.ctx.stroke();
+        cw.text(
+          `Time  ${String(Math.floor(t / 60000)).padStart(5, " ")}:${
+            String(Math.floor(t / 1000)).padStart(2, "0")
+          }`,
+          cw.width / 2,
+          cw.height / 2,
+          Color.white,
+          `300 ${cw.r * 0.75}px monospace`,
+        );
+        cw.text(
+          `Click ${String(c).padStart(8, " ")}`,
+          cw.width / 2,
+          cw.height / 2 + cw.r,
+          Color.white,
+          `300 ${cw.r * 0.75}px monospace`,
+        );
+      };
+      d();
+      cw.onresize = d;
+      const v = () => {
+        cw.onresize = undefined;
+        cw.elem.removeEventListener("click", v);
+        resolve();
+      };
+      cw.elem.addEventListener("click", v);
     });
   }
 }
