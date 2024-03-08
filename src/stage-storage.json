@@ -68,6 +68,20 @@
     ]
   },
   {
+    "name": "Butterfly",
+    "field": [
+      "    m0",
+      "   ....",
+      "  H1  ..",
+      " ..    ..",
+      "m2..q3p0H1......m2",
+      "         ..    ..",
+      "          q1  H1",
+      "           ....",
+      "            m0"
+    ]
+  },
+  {
     "name": "Three Half Mirrors",
     "field": [
       "m4p0H5m1",
