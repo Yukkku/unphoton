@@ -68,6 +68,16 @@
     ]
   },
   {
+    "name": "Three Half Mirrors",
+    "field": [
+      "m4p0H5m1",
+      " ..  m1H3m1",
+      "  ..    m1H3",
+      "   h4......m4",
+      "    q1"
+    ]
+  },
+  {
     "name": "Z Gate",
     "field": [
       "p0..h2Z0m2",
@@ -81,6 +91,24 @@
       "p0..h2S0S0m2  m5S1h5..q0",
       "   ..    S0  s1  ..",
       "  m2z1..h2..h5Z0m5"
+    ]
+  },
+  {
+    "name": "T Gate",
+    "field": [
+      "q3p0..h2..t1m2",
+      "     ..    S1",
+      "    m2T0Z0h2..m3"
+    ]
+  },
+  {
+    "name": "Infinity",
+    "field": [
+      "  m5p0m1  m5S1m1",
+      " T1    h5h1    ..",
+      "m3      ..      m3",
+      " Z1    ....    t1",
+      "  m1s1m5  m1q3m5"
     ]
   },
   {
@@ -101,26 +129,6 @@
       "  h0  h0",
       " ..S1..S1",
       "q2  m0  m5"
-    ]
-  },
-  {
-    "name": "Infinity",
-    "field": [
-      "  m5p0m1  m5S1m1",
-      " T1    h5h1    ..",
-      "m3      ..      m3",
-      " Z1    ....    t1",
-      "  m1s1m5  m1q3m5"
-    ]
-  },
-  {
-    "name": "Three Half Mirrors",
-    "field": [
-      "m4p0H5m1",
-      " ..  m1H3m1",
-      "  ..    m1H3",
-      "   h4......m4",
-      "    q1"
     ]
   }
 ]
