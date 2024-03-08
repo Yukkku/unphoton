@@ -199,5 +199,15 @@
       " T0",
       "m1"
     ]
+  },
+  {
+    "name": "Pauli Exclusion Principle",
+    "field": [
+      "  p1",
+      "   ..",
+      "p0..H3..m1  q5",
+      "     ..  ....",
+      "      m1..C2..q0"
+    ]
   }
 ]

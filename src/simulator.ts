@@ -201,7 +201,7 @@ export const next = ([x, p, q]: Func, s: Stage): Func | undefined => {
       let c = 0;
       for (let k = 0; k < key.length; k++) {
         for (let l = k + 1; l < key.length; l++) {
-          if (key[k] === key[l]) break a;
+          if (key[k] === key[l]) continue a;
           if (key[k] > key[l]) {
             const tmp = key[k];
             key[k] = key[l];
