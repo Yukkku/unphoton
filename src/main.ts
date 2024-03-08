@@ -1,4 +1,3 @@
-import * as Color from "./color.ts";
 import { CanvasWrapper } from "./canvas-wrapper.ts";
 import { Cell, CellType, Stage } from "./stage.ts";
 import { stageSelect } from "./stage-select.ts";
