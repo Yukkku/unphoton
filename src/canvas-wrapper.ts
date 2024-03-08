@@ -11,7 +11,6 @@ export class CanvasWrapper {
     public elem: HTMLCanvasElement = document.createElement("canvas"),
   ) {
     this.ctx = elem.getContext("2d")!;
-    elem.style.backgroundColor = Color.background;
     elem.addEventListener("mousemove", (e) => {
       this.#mouseX = e.offsetX;
       this.#mouseY = e.offsetY;
@@ -74,5 +73,7 @@ export class CanvasWrapper {
 
   clear() {
     this.ctx.reset();
+    this.ctx.fillStyle = Color.background;
+    this.ctx.fillRect(0, 0, this.width, this.height);
   }
 }

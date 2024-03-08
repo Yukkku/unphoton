@@ -17,8 +17,7 @@ const cw = new CanvasWrapper();
     cw.elem.width = s * 16;
     cw.elem.height = s * 9;
 
-    cw.ctx.fillStyle = Color.background;
-    cw.ctx.fillRect(0, 0, cw.width, cw.height);
+    cw.clear();
     cw.onresize?.();
   };
   window.addEventListener("resize", setSize);

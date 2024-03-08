@@ -235,7 +235,7 @@ export class Stage {
       let f: Func = start(this);
       let last = Date.now();
       const draw = (): boolean => {
-        cw.ctx.reset();
+        cw.clear();
         this.draw(cw, undefined, f, (Date.now() - last) / 300);
         const { r, ctx } = cw;
         const x = cw.width - r * 1.2;
