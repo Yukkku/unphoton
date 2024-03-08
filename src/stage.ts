@@ -231,26 +231,61 @@ export class Stage {
     }
   }
 
-  async run(cw: CanvasWrapper): Promise<boolean> {
-    let f: Func = start(this);
-    let last = Date.now();
-    const anime = setInterval(() => {
-      cw.ctx.reset();
-      this.draw(cw, undefined, f, (Date.now() - last) / 300);
+  run(cw: CanvasWrapper) {
+    return new Promise<boolean>((resolve) => {
+      let f: Func = start(this);
+      let last = Date.now();
+      const draw = (): boolean => {
+        cw.ctx.reset();
+        this.draw(cw, undefined, f, (Date.now() - last) / 300);
+        const { r, ctx } = cw;
+        const x = cw.width - r * 1.2;
+        const y = cw.height - r * 1.2;
+        const e = Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875);
+        cw.ophex(
+          e ? Color.hoverHexFill : Color.hexFill,
+          e ? Color.white : Color.gray,
+          x,
+          y,
+        );
+        ctx.beginPath();
+        ctx.moveTo(x + r / 3, y + r / 3);
+        ctx.lineTo(x - r / 3, y - r / 3);
+        ctx.moveTo(x + r / 3, y - r / 3);
+        ctx.lineTo(x - r / 3, y + r / 3);
+        ctx.strokeStyle = Color.white;
+        ctx.lineWidth = r / 15;
+        ctx.stroke();
+        return e;
+      };
+      const onclick = () => {
+        if (draw()) {
+          clearInterval(anime);
+          clearInterval(sim);
+          cw.elem.removeEventListener("click", onclick);
+          resolve(false);
+        }
+      };
+      cw.elem.addEventListener("click", onclick);
+      const anime = setInterval(draw);
+      const sim = setInterval(() => {
+        const nf = next(f, this);
+        if (nf) f = nf;
+        else {
+          clearInterval(anime);
+          clearInterval(sim);
+          cw.elem.removeEventListener("click", onclick);
+          resolve(false);
+        }
+        if (isAccepted(f, this)) {
+          clearInterval(anime);
+          clearInterval(sim);
+          cw.elem.removeEventListener("click", onclick);
+          resolve(true);
+        }
+        last = Date.now();
+      }, 300);
     });
-    while (!isAccepted(f, this)) {
-      await sleep(300);
-      const nf = next(f, this);
-      if (nf) f = nf;
-      else {
-        clearInterval(anime);
-        return false;
-      }
-      last = Date.now();
-    }
-    clearInterval(anime);
-    this.draw(cw, undefined, f, 0);
-    return true;
   }
 
   play(cw: CanvasWrapper) {
