@@ -75,44 +75,12 @@ export class Stage {
       const l = this.d[i];
       for (let j = 0; j < l.length; j++) {
         const c = l[j];
-
-        const x = (j * 2 + i) * rcos30 + dx;
-        const y = i * r * 1.5 + dy;
-
-        if (c[0] === CellType.None) continue;
-        if (c[0] === CellType.Void) {
-          const path = Hex.path(x, y, r * 0.875);
-          ctx.fillStyle = Color.hexFill;
-          ctx.fill(path);
-        } else if (c[1]) {
-          cw.ophex(
-            hl === c ? Color.hoverHexFill : Color.hexFill,
-            Color.white,
-            x,
-            y,
-            r,
-          );
-        } else cw.hex(x, y, r);
-
-        switch (c[0]) {
-          case CellType.Start:
-          case CellType.Goal: {
-            const srsin = r * Math.sin(c[2] * Math.PI / 3) / 2;
-            const srcos = r * Math.cos(c[2] * Math.PI / 3) / 2;
-            ctx.beginPath();
-            ctx.moveTo(x + srsin, y - srcos);
-            ctx.lineTo(x + srcos, y + srsin);
-            ctx.lineTo(x - srsin, y + srcos);
-            ctx.moveTo(x + srcos, y + srsin);
-            ctx.lineTo(x - srcos, y - srsin);
-            ctx.strokeStyle = c[0] === CellType.Start
-              ? Color.start
-              : Color.goal;
-            ctx.lineWidth = r / 15;
-            ctx.stroke();
-            break;
-          }
-        }
+        cw.drawCell(
+          (j * 2 + i) * rcos30 + dx,
+          i * r * 1.5 + dy,
+          c,
+          hl === c ? 5 : 1,
+        );
       }
     }
 
@@ -160,67 +128,12 @@ export class Stage {
       const l = this.d[i];
       for (let j = 0; j < l.length; j++) {
         const c = l[j];
-
-        const x = (j * 2 + i) * rcos30 + dx;
-        const y = i * r * 1.5 + dy;
-
-        switch (c[0]) {
-          case CellType.Mirror: {
-            const srsin = r * Math.sin(c[2] * Math.PI / 6) / 2;
-            const srcos = r * Math.cos(c[2] * Math.PI / 6) / 2;
-            ctx.beginPath();
-            ctx.moveTo(x + srcos, y + srsin);
-            ctx.lineTo(x - srcos, y - srsin);
-            ctx.strokeStyle = Color.mirror;
-            ctx.lineWidth = r / 15;
-            ctx.stroke();
-            break;
-          }
-          case CellType.HalfMirror: {
-            const srsin = r * Math.sin(c[2] * Math.PI / 6) / 2;
-            const srcos = r * Math.cos(c[2] * Math.PI / 6) / 2;
-            ctx.beginPath();
-            ctx.moveTo(x + srcos, y + srsin);
-            ctx.lineTo(x + srcos / 6, y + srsin / 6);
-            ctx.moveTo(x - srcos, y - srsin);
-            ctx.lineTo(x - srcos / 6, y - srsin / 6);
-            ctx.strokeStyle = Color.mirror;
-            ctx.lineWidth = r / 15;
-            ctx.stroke();
-            break;
-          }
-          case CellType.CMirror: {
-            const srsin = r * Math.sin(c[2] * Math.PI / 6) / 2;
-            const srcos = r * Math.cos(c[2] * Math.PI / 6) / 2;
-            ctx.beginPath();
-            ctx.moveTo(x + srcos + srsin / 5, y + srsin - srcos / 5);
-            ctx.lineTo(x - srcos + srsin / 5, y - srsin - srcos / 5);
-            ctx.moveTo(x + srcos - srsin / 5, y + srsin + srcos / 5);
-            ctx.lineTo(x - srcos - srsin / 5, y - srsin + srcos / 5);
-            ctx.strokeStyle = Color.mirror;
-            ctx.lineWidth = r / 15;
-            ctx.stroke();
-            break;
-          }
-          case CellType.Z: {
-            ctx.fillStyle = c[2] ? Color.zGate : Color.gray;
-            ctx.fill(Hex.path(x, y, r / 2));
-            cw.text("Z", x, y, Color.black, `300 ${r / 2}px monospace`);
-            break;
-          }
-          case CellType.S: {
-            ctx.fillStyle = c[2] ? Color.sGate : Color.gray;
-            ctx.fill(Hex.path(x, y, r / 2));
-            cw.text("S", x, y, Color.black, `300 ${r / 2}px monospace`);
-            break;
-          }
-          case CellType.T: {
-            ctx.fillStyle = c[2] ? Color.tGate : Color.gray;
-            ctx.fill(Hex.path(x, y, r / 2));
-            cw.text("T", x, y, Color.black, `300 ${r / 2}px monospace`);
-            break;
-          }
-        }
+        cw.drawCell(
+          (j * 2 + i) * rcos30 + dx,
+          i * r * 1.5 + dy,
+          c,
+          hl === c ? 6 : 2,
+        );
       }
     }
   }
