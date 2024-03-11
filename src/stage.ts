@@ -286,14 +286,14 @@ export class Stage {
             clickCount += 1;
             cw.onresize = undefined;
             cw.onclick = undefined;
-            cw.elem.removeEventListener("mousemove", onmousemove);
+            cw.onmousemove = undefined;
             if (await this.run(cw)) {
               await this.accepted(cw, endTime - beginTime, clickCount);
               resolve();
             } else {
               cw.onresize = onresize;
               cw.onclick = onclick;
-              cw.elem.addEventListener("mousemove", onmousemove);
+              cw.onmousemove = onmousemove;
               redraw();
             }
           }
@@ -306,7 +306,7 @@ export class Stage {
           ) {
             cw.onresize = undefined;
             cw.onclick = undefined;
-            cw.elem.removeEventListener("mousemove", onmousemove);
+            cw.onmousemove = undefined;
             resolve();
           }
           return;
@@ -329,7 +329,7 @@ export class Stage {
       };
       cw.onresize = onresize;
       cw.onclick = onclick;
-      cw.elem.addEventListener("mousemove", onmousemove);
+      cw.onmousemove = onmousemove;
     });
   }
 

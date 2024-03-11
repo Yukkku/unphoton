@@ -26,7 +26,7 @@ export const g = (cw: CanvasWrapper) => {
   const v = new Stage(r);
   const draw = () => {
     cw.clear();
-    const r = cw.r;
+    const { ctx, r } = cw;
     const e = r * 0.4330127018922193;
     const x = cw.height / 2 - r * 6;
 
@@ -38,12 +38,31 @@ export const g = (cw: CanvasWrapper) => {
         mode === i ? 7 : 3,
       );
     }
-
     v.draw(cw);
+    {
+      const x = cw.width - r * 1.2;
+      const y = cw.height - r * 1.2;
+      cw.ophex(
+        Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875)
+          ? "#252"
+          : "#232",
+        "#0f0",
+        x,
+        y,
+      );
+      ctx.fillStyle = "#0c0";
+      ctx.beginPath();
+      ctx.moveTo(x + r / 2, y);
+      ctx.lineTo(x - r / 4, y - e);
+      ctx.lineTo(x - r / 4, y + e);
+      ctx.closePath();
+      ctx.fill();
+    }
   };
-  cw.onresize = draw;
   draw();
-  cw.onclick = ({ shiftKey, ctrlKey }) => {
+  cw.onresize = draw;
+  cw.onmousemove = draw;
+  cw.onclick = () => {
     const r = v.mouseTouching(cw);
     if (!r) {
       const r = cw.r;

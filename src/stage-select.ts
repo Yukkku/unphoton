@@ -7,7 +7,6 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
   new Promise((resolve) => {
     let id: number | undefined;
     const draw = () => {
-      console.log("!");
       id = undefined;
       cw.clear();
       cw.text(
@@ -61,15 +60,14 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
     };
     draw();
     cw.onresize = draw;
-    const onmousemove = () => draw();
     cw.onclick = () => {
       draw();
       if (id != null) {
         cw.onresize = undefined;
         cw.onclick = undefined;
-        cw.elem.removeEventListener("mousemove", onmousemove);
+        cw.onmousemove = undefined;
         resolve(id);
       }
     };
-    cw.elem.addEventListener("mousemove", onmousemove);
+    cw.onmousemove = draw;
   });

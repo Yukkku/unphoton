@@ -7,6 +7,7 @@ export class CanvasWrapper {
   ctx: CanvasRenderingContext2D;
   onresize?: () => void;
   onclick?: (e: MouseEvent) => void;
+  onmousemove?: (e: MouseEvent) => void;
   #mouseX = 0;
   #mouseY = 0;
 
@@ -17,6 +18,7 @@ export class CanvasWrapper {
     elem.addEventListener("mousemove", (e) => {
       this.#mouseX = e.offsetX;
       this.#mouseY = e.offsetY;
+      this.onmousemove?.(e);
     });
     new ResizeObserver(() => this.onresize?.()).observe(elem);
     elem.addEventListener("click", (e) => this.onclick?.(e));
