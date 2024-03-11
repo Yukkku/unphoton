@@ -277,15 +277,14 @@ export class Stage {
         ctx.stroke();
         return e;
       };
-      const onclick = () => {
+      cw.onclick = () => {
         if (draw()) {
           clearInterval(anime);
           clearInterval(sim);
-          cw.elem.removeEventListener("click", onclick);
+          cw.onclick = undefined;
           resolve(false);
         }
       };
-      cw.elem.addEventListener("click", onclick);
       const anime = setInterval(draw);
       const sim = setInterval(() => {
         const nf = next(f, this);
@@ -293,13 +292,13 @@ export class Stage {
         else {
           clearInterval(anime);
           clearInterval(sim);
-          cw.elem.removeEventListener("click", onclick);
+          cw.onclick = undefined;
           resolve(false);
         }
         if (isAccepted(f, this)) {
           clearInterval(anime);
           clearInterval(sim);
-          cw.elem.removeEventListener("click", onclick);
+          cw.onclick = undefined;
           resolve(true);
         }
         last = Date.now();
@@ -371,7 +370,7 @@ export class Stage {
           ) {
             clickCount += 1;
             cw.onresize = undefined;
-            cw.elem.removeEventListener("click", onclick);
+            cw.onclick = undefined;
             cw.elem.removeEventListener("mousemove", onmousemove);
             if (await this.run(cw)) {
               await this.accepted(cw, endTime - beginTime, clickCount);
@@ -391,7 +390,7 @@ export class Stage {
             )
           ) {
             cw.onresize = undefined;
-            cw.elem.removeEventListener("click", onclick);
+            cw.onclick = undefined;
             cw.elem.removeEventListener("mousemove", onmousemove);
             resolve();
           }
@@ -414,7 +413,7 @@ export class Stage {
         redraw();
       };
       cw.onresize = onresize;
-      cw.elem.addEventListener("click", onclick);
+      cw.onclick = onclick;
       cw.elem.addEventListener("mousemove", onmousemove);
     });
   }

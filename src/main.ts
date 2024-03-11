@@ -17,7 +17,6 @@ const cw = new CanvasWrapper();
     cw.elem.height = s * 9;
 
     cw.clear();
-    cw.onresize?.();
   };
   window.addEventListener("resize", setSize);
   setSize();

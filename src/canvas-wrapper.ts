@@ -4,6 +4,7 @@ import * as Hex from "./hex.ts";
 export class CanvasWrapper {
   ctx: CanvasRenderingContext2D;
   onresize?: () => void;
+  onclick?: () => void;
   #mouseX = 0;
   #mouseY = 0;
 
@@ -15,6 +16,8 @@ export class CanvasWrapper {
       this.#mouseX = e.offsetX;
       this.#mouseY = e.offsetY;
     });
+    new ResizeObserver(() => this.onresize?.()).observe(elem);
+    elem.addEventListener("click", () => this.onclick?.());
   }
 
   get width(): number {
