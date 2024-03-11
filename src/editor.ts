@@ -62,7 +62,7 @@ export const g = (cw: CanvasWrapper) => {
   draw();
   cw.onresize = draw;
   cw.onmousemove = draw;
-  cw.onclick = () => {
+  const onclick = async () => {
     const r = v.mouseTouching(cw);
     if (!r) {
       const r = cw.r;
@@ -80,6 +80,22 @@ export const g = (cw: CanvasWrapper) => {
           mode = i;
           draw();
         }
+      }
+      if (
+        Hex.isTouching(
+          cw.mouseX - cw.width + r * 1.2,
+          cw.mouseY - cw.height + r * 1.2,
+          r * 0.875,
+        )
+      ) {
+        cw.onresize = undefined;
+        cw.onmousemove = undefined;
+        cw.onclick = undefined;
+        await v.run(cw);
+        cw.onresize = draw;
+        cw.onmousemove = draw;
+        cw.onclick = onclick;
+        draw();
       }
       return;
     }
@@ -130,4 +146,5 @@ export const g = (cw: CanvasWrapper) => {
     }
     draw();
   };
+  cw.onclick = onclick;
 };
