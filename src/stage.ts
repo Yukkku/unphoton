@@ -156,7 +156,9 @@ export class Stage {
         const x = (j * 2 + i) * rcos30 + dx;
         const y = i * r * 1.5 + dy;
 
-        if (Hex.isTouching(mx - x, my - y, r * 0.875)) {
+        if (
+          c[0] !== CellType.None && Hex.isTouching(mx - x, my - y, r * 0.875)
+        ) {
           return c;
         }
       }

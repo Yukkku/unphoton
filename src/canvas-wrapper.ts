@@ -89,14 +89,9 @@ export class CanvasWrapper {
         const path = Hex.path(x, y, this.r * 0.875);
         this.ctx.fillStyle = Color.hexFill;
         this.ctx.fill(path);
-      } else if (c[1]) {
-        this.ophex(
-          e & 4 ? Color.hoverHexFill : Color.hexFill,
-          Color.white,
-          x,
-          y,
-        );
-      } else this.hex(x, y);
+      } else if (e & 4) this.ophex(Color.hoverHexFill, Color.white, x, y);
+      else if (c[1]) this.ophex(Color.hexFill, Color.white, x, y);
+      else this.hex(x, y);
       if (c[0] === CellType.Start || c[0] === CellType.Goal) {
         const srsin = this.r * Math.sin(c[2] * Math.PI / 3) / 2;
         const srcos = this.r * Math.cos(c[2] * Math.PI / 3) / 2;
