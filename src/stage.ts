@@ -5,6 +5,7 @@ import * as Hex from "./hex.ts";
 
 export enum CellType {
   None,
+  Void,
   Plane,
   Start,
   Goal,
@@ -18,6 +19,7 @@ export enum CellType {
 
 export type Cell =
   | [CellType.None]
+  | [CellType.Void]
   | [CellType.Plane]
   | [CellType.Start | CellType.Goal, 0, 0 | 1 | 2 | 3 | 4 | 5]
   | [
@@ -78,7 +80,11 @@ export class Stage {
         const y = i * r * 1.5 + dy;
 
         if (c[0] === CellType.None) continue;
-        if (c[1]) {
+        if (c[0] === CellType.Void) {
+          const path = Hex.path(x, y, r * 0.875);
+          ctx.fillStyle = Color.hexFill;
+          ctx.fill(path);
+        } else if (c[1]) {
           cw.ophex(
             hl === c ? Color.hoverHexFill : Color.hexFill,
             Color.white,
@@ -237,7 +243,7 @@ export class Stage {
         const x = (j * 2 + i) * rcos30 + dx;
         const y = i * r * 1.5 + dy;
 
-        if (c[1] && Hex.isTouching(mx - x, my - y, r * 0.875)) {
+        if (Hex.isTouching(mx - x, my - y, r * 0.875)) {
           return c;
         }
       }
@@ -391,6 +397,7 @@ export class Stage {
           }
           return;
         }
+        if (!c[1]) return;
         clickCount += 1;
         switch (c[0]) {
           case CellType.Mirror:
