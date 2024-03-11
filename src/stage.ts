@@ -377,7 +377,7 @@ export class Stage {
               resolve();
             } else {
               cw.onresize = onresize;
-              cw.elem.addEventListener("click", onclick);
+              cw.onclick = onclick;
               cw.elem.addEventListener("mousemove", onmousemove);
               redraw();
             }
