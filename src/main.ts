@@ -7,7 +7,7 @@ import Stages from "./stage-storage.json" with { type: "json" };
 
 const cw = new CanvasWrapper();
 
-{ // windowのサイズ変更用の処理
+{
   const setSize = () => {
     const s = Math.floor(Math.min(
       window.innerHeight / 9,
@@ -27,15 +27,14 @@ document.body.appendChild(cw.elem);
 
 const pp = new URL(location.href).searchParams.get("m");
 if (pp) {
-  editor(cw, pp);
-} else {
-  for (;;) {
-    const id = await stageSelect(cw);
-    if (id === -1) {
-      editor(cw);
-      break;
-    } else {
-      await new Stage(parse(Stages[id].field)).play(cw);
-    }
+  await editor(cw, pp);
+  history.replaceState(null, "", "/");
+}
+for (;;) {
+  const id = await stageSelect(cw);
+  if (id === -1) {
+    await editor(cw);
+  } else {
+    await new Stage(parse(Stages[id].field)).play(cw);
   }
 }
