@@ -77,21 +77,21 @@ export const editor = (cw: CanvasWrapper, pp?: string) =>
           y,
         );
         ctx.beginPath();
-        ctx.moveTo(x + r / 4, y + e);
-        ctx.lineTo(x - r / 2, y);
-        ctx.lineTo(x + r / 4, y - e);
+        ctx.moveTo(x + r / 5, y + e * 0.8);
+        ctx.lineTo(x - r * 0.4, y);
+        ctx.lineTo(x + r / 5, y - e * 0.8);
         ctx.strokeStyle = t ? Color.white : Color.gray;
         ctx.lineWidth = r / 20;
         ctx.stroke();
         ctx.fillStyle = t ? Color.white : Color.gray;
         ctx.beginPath();
-        ctx.arc(x + r / 4, y + e, r / 10, 0, Math.PI * 2);
+        ctx.arc(x + r / 5, y + e * 0.8, r / 10, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(x - r / 2, y, r / 10, 0, Math.PI * 2);
+        ctx.arc(x - r * 0.4, y, r / 10, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(x + r / 4, y - e, r / 10, 0, Math.PI * 2);
+        ctx.arc(x + r / 5, y - e * 0.8, r / 10, 0, Math.PI * 2);
         ctx.fill();
       }
       {
