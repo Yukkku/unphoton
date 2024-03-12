@@ -1,7 +1,6 @@
 import { CanvasWrapper } from "./canvas-wrapper.ts";
-import { Cell, CellType, parse, Stage } from "./stage.ts";
+import { parse, Stage } from "./stage.ts";
 import { stageSelect } from "./stage-select.ts";
-import { todo } from "./util.ts";
 import { editor } from "./editor.ts";
 import Stages from "./stage-storage.json" with { type: "json" };
 
