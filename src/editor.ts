@@ -305,11 +305,15 @@ const toString = (v: Stage) => {
           return "t" + String(x[2]);
       }
     }).join("")
-  ).join("");
+  ).join("")
+    .replace(/.(_*)$/, (v) => v[0])
+    .replace(/_{2,20}/g, (v) => "_" + String(v.length / 2 - 1))
+    .replace(/\.{2,20}/g, (v) => "." + String(v.length / 2 - 1));
 };
 const fromString = (v: string) => {
-  if (v.length !== 240) return null;
-  const g = v.match(/.{24}/g)!;
+  let d = v.replace(/[_\.]\d/g, (v) => v[0].repeat(Number(v[1]) * 2 + 2));
+  d += "_".repeat(240 - d.length);
+  const g = d.match(/.{24}/g)!;
   for (let i = 1; i < 10; i += 2) g[i] = " " + g[i];
   try {
     return parse(g);
