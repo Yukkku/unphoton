@@ -101,8 +101,12 @@ const parse = (v: string[]) => {
   return r;
 };
 
+import { g } from "./editor.ts";
+g(cw);
+/*
 for (;;) {
   const id = await stageSelect(cw);
 
   await new Stage(parse(Stages[id].field)).play(cw);
 }
+//*/
