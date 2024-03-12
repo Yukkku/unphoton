@@ -1,5 +1,5 @@
 import { CanvasWrapper } from "./canvas-wrapper.ts";
-import { Cell, CellType, Stage } from "./stage.ts";
+import { Cell, CellType, parse, Stage } from "./stage.ts";
 import * as Hex from "./hex.ts";
 import * as Color from "./color.ts";
 
@@ -15,15 +15,21 @@ const MODES = [
   [CellType.T, 0, 1],
 ] as const satisfies Cell[];
 
-export const g = (cw: CanvasWrapper) => {
-  let mode = 0;
-  const r: Cell[][] = [];
-  for (let i = 0; i < 10; i++) {
-    const v: Cell[] = [];
-    for (let j = i; j < 10; j += 2) v.push([CellType.None]);
-    for (let j = 0; j < 12; j++) v.push([CellType.Void]);
-    r.push(v);
+export const editor = (cw: CanvasWrapper, pp?: string) => {
+  let r: Cell[][] = [];
+  if (pp) {
+    const g = fromString(pp);
+    if (g) r = g;
   }
+  if (r.length === 0) {
+    for (let i = 0; i < 10; i++) {
+      const v: Cell[] = [];
+      for (let j = i; j < 10; j += 2) v.push([CellType.None]);
+      for (let j = 0; j < 12; j++) v.push([CellType.Void]);
+      r.push(v);
+    }
+  }
+  let mode = 0;
   const v = new Stage(r);
   const draw = () => {
     cw.clear();
@@ -201,7 +207,7 @@ export const g = (cw: CanvasWrapper) => {
 const share = (v: Stage) =>
   new Promise<void>((resolve) => {
     const url = new URL(location.href);
-    url.searchParams.set("q", toString(v));
+    url.searchParams.set("m", toString(v));
     const str = url.href;
     const elem = document.createElement("dialog");
     elem.id = "share";
@@ -269,4 +275,14 @@ const toString = (v: Stage) => {
       }
     }).join("")
   ).join("");
+};
+const fromString = (v: string) => {
+  if (v.length !== 240) return null;
+  const g = v.match(/.{24}/g)!;
+  for (let i = 1; i < 10; i += 2) g[i] = " " + g[i];
+  try {
+    return parse(g);
+  } catch (_) {
+    return null;
+  }
 };
