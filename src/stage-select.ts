@@ -32,11 +32,21 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
             else cw.hex(x, y);
             cw.ctx.fillStyle = "#fff";
             cw.ctx.beginPath();
-            cw.ctx.moveTo(x - r / 2, y + r / 2);
-            cw.ctx.lineTo(x + r / 2, y - r / 2);
+            cw.ctx.moveTo(x, y + r / 2);
+            cw.ctx.lineTo(x + rcos30 / 2, y - r / 4);
+            cw.ctx.lineTo(x - rcos30 / 2, y - r / 4);
             cw.ctx.closePath();
             cw.ctx.stroke();
-            if (t) id = -1;
+            if (t) {
+              id = -1;
+              cw.text(
+                "Stage Editor",
+                cw.width / 2,
+                cw.width / 2,
+                Color.white,
+                `300 ${r * 0.7}px monospace`,
+              );
+            }
           } else if (v >= Stages.length) cw.hex(x, y);
           else if (t) {
             cw.ophex(Color.hoverHexFill, Color.white, x, y);
