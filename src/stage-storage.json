@@ -189,6 +189,16 @@
     ]
   },
   {
+    "name": "Puffer",
+    "field": [
+      "          M5........M3",
+      " q3....p1M2..m1m5..M1M1",
+      "    q3p0c0m1m5c0m1m5c0m3",
+      "       p5m1c0m5m1c0m5m5",
+      "      q2"
+    ]
+  },
+  {
     "name": "Entanglement",
     "field": [
       "  p0q3m1  M5........q0",
@@ -245,6 +255,16 @@
       "    m2z1h2..m3",
       "       S1",
       "      m1"
+    ]
+  },
+  {
+    "name": "SOY",
+    "field": [
+      "    m0  p2m0",
+      " M4Z1S1t1z1s1",
+      "m3c0..c0h2p3M4",
+      "   ..q5..",
+      "    m0q2"
     ]
   }
 ]
