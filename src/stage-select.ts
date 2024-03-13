@@ -18,16 +18,16 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
       );
       const r = cw.r;
       const rcos30 = r * 0.8660254037844386;
-      const dx = cw.width / 2 - rcos30 * 14.5;
-      const dy = cw.height / 4;
+      const dx = cw.width / 2 - rcos30 * 7.5;
+      const dy = cw.height / 3;
 
-      for (let i = 0; i < 7; i++) {
-        for (let j = 0; j < 15; j++) {
-          const v = i * 15 + j;
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 8; j++) {
+          const v = i * 8 + j;
           const x = (j * 2 + i % 2) * rcos30 + dx;
           const y = i * r * 1.5 + dy;
           const t = Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875);
-          if (v === 104) {
+          if (v === 31) {
             if (t) cw.ophex(Color.hoverHexFill, Color.white, x, y);
             else cw.hex(x, y);
             cw.ctx.fillStyle = "#fff";
