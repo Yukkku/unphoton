@@ -12,9 +12,9 @@ const cw = new CanvasWrapper();
       window.innerHeight / 9,
       window.innerWidth / 16,
     ));
-    if (cw.elem.width / 16 === s) return;
-    cw.elem.width = s * 16;
-    cw.elem.height = s * 9;
+    if (cw.elem.width / 32 === s) return;
+    cw.elem.width = s * 32;
+    cw.elem.height = s * 18;
 
     cw.clear();
   };

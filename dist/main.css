@@ -9,6 +9,10 @@ body {
   align-items: center;
 }
 
+canvas {
+  scale: 0.5;
+}
+
 #share[open] {
   padding: 1rem;
   border: solid 2px #888;
