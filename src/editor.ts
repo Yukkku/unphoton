@@ -113,6 +113,26 @@ export const editor = (cw: CanvasWrapper, pp?: string) =>
         ctx.lineTo(x - r / 3, y + r / 3);
         ctx.stroke();
       }
+      {
+        const x = cw.width - r * 1.2 - e * 2;
+        const y = cw.height - r * 5.7;
+        const t = Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875);
+        cw.ophex(
+          t ? Color.hoverHexFill : Color.hexFill,
+          t ? Color.white : Color.gray,
+          x,
+          y,
+        );
+        if (t) cw.ophex(Color.hoverHexFill, Color.white, x, y);
+        else cw.hex(x, y);
+        cw.text(
+          "?",
+          x,
+          y,
+          t ? Color.white : Color.gray,
+          `300 ${r}px monospace`,
+        );
+      }
     };
     draw();
     cw.onresize = draw;
@@ -182,7 +202,14 @@ export const editor = (cw: CanvasWrapper, pp?: string) =>
           cw.onmousemove = undefined;
           cw.onclick = undefined;
           resolve();
-        }
+        } else if (
+          Hex.isTouching(
+            cw.width - r * 1.2 - e * 2 - cw.mouseX,
+            cw.height - r * 5.7 - cw.mouseY,
+            r * 0.875,
+          )
+        ) window.open("https://github.com/Yukkku/unphoton/blob/main/editor.md");
+
         return;
       }
       if (mode === 0) {
