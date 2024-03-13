@@ -27,7 +27,27 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
           const x = (j * 2 + i % 2) * rcos30 + dx;
           const y = i * r * 1.5 + dy;
           const t = Hex.isTouching(cw.mouseX - x, cw.mouseY - y, r * 0.875);
-          if (v === 31) {
+          if (v === 30) {
+            if (t) cw.ophex(Color.hoverHexFill, Color.white, x, y);
+            else cw.hex(x, y);
+            cw.text(
+              "?",
+              x,
+              y,
+              t ? Color.white : Color.gray,
+              `300 ${r}px monospace`,
+            );
+            if (t) {
+              id = -2;
+              cw.text(
+                "About",
+                cw.width / 2,
+                cw.width / 2,
+                Color.white,
+                `300 ${r * 0.7}px monospace`,
+              );
+            }
+          } else if (v === 31) {
             if (t) cw.ophex(Color.hoverHexFill, Color.white, x, y);
             else cw.hex(x, y);
             cw.ctx.fillStyle = "#fff";
@@ -82,7 +102,9 @@ export const stageSelect = (cw: CanvasWrapper): Promise<number> =>
     cw.onresize = draw;
     cw.onclick = () => {
       draw();
-      if (id != null) {
+      if (id === -2) {
+        window.open("https://github.com/Yukkku/Unphoton/blob/main/about.md");
+      } else if (id != null) {
         cw.onresize = undefined;
         cw.onclick = undefined;
         cw.onmousemove = undefined;
